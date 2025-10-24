@@ -1,0 +1,18 @@
+This is the source code for the OWIDSlider gadget
+as used on Wikipedia and MDWiki.
+
+For more information see https://mdwiki.org/wiki/WikiProjectMed:OWID
+
+The software is licensed under the Creative Commons Attribution-ShareAlike License.
+
+It also includes jquery.mousewheel by Brandon Aaron which is MIT licensed.
+
+If you want to test locally, open up demo.html in a web browser
+
+== Installation instructions==
+
+This assumes you have a MediaWiki installation with the gadgets extension installed.
+
+* Create pages MediaWiki:Gadget-owidslider.js and MediaWiki:Gadget-owidslider.css copied from this repo
+* Add `owidslider [ResourceLoader|default|categories=Pages using gadget owidslider]|owidslider.js|owidslider.css` to MediaWiki:Gadgets-definition
+* Copy Template:Owidslider, Module:Owidslider from mdwiki
