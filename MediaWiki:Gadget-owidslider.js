@@ -2229,6 +2229,8 @@ populateTranslatedCountriesNames: function() {
 	if (scaledContent.length > 0) {
 		var headerSpan = scaledContent.find("#header a text tspan");
 		if (headerSpan.length > 0) {
+			// Delete all but the first one
+			headerSpan.slice(1).remove();
 			// Remove the trailing ", $YEAR" from the title if found
     		if (this.worldTitle) {
 	    		var titleParts = this.worldTitle.split(",");
@@ -2241,6 +2243,7 @@ populateTranslatedCountriesNames: function() {
 
 		if (this.worldSubtitle) {
     		var subtitleSpan = scaledContent.find("#subtitle text tspan");
+			subtitleSpan.slice(1).remove();
     		if (subtitleSpan.length > 0) {
     			subtitleSpan.text(this.worldSubtitle);
     		}
