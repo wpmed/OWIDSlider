@@ -1361,7 +1361,7 @@ OWIDSlider.Context.prototype = {
         svgData = OWIDSlider.purify( svgData );
         that.cachedSvgs[svgUrl] = svgData;
         var svgEl = that.getScaledSvg(svgData);
-		this.setSvg( svgEl );
+		that.setSvg( svgEl );
         that.attachSVGHandlers();
         callback();
       })
@@ -2559,4 +2559,3 @@ populateTranslatedCountriesNames: function() {
 
 // --- Start image stack popup
 $(OWIDSlider.init); // Script written by Bawolff for WikiProject Med Foundation based on earlier OWIDSlider script by Hellerhoff.
-
