@@ -1,4 +1,23 @@
-// Script written by Hassan.m.amin for WikiProject Med Foundation based on earlier OWIDSlider script by Bawolff and Hellerhoff.
+/*
+ * OWID Slider — Our World In Data SVG Image Stack Viewer for Wikimedia
+ *
+ * Purpose:
+ *   Provide a self-contained OWIDSlider functionality used to
+ *   preview OWID SVG image stacks with a timeline slider, per-country charts
+ *   and lightweight translation support. Intended for testing, debugging and
+ *   local development outside the main repository.
+ *
+ * Authors: Hellerhoff, Bawolff,Hassan M. Amin
+ * Contributors: Booksmurf
+ *
+ * Notes:
+ *   - This file expects to run in a MediaWiki-like environment or a test page
+ *     that exposes the referenced globals. For local testing, use demo.html
+ *
+ * Initialization:
+ *   The script calls $(OWIDSlider.init) at the end to attach the play button
+ *   handlers and initialize the slider when the document is ready.
+ */
 
 var OWIDSlider = {
   // ---------------------------------------------------------------------
@@ -7,6 +26,36 @@ var OWIDSlider = {
   // Minimal behavioural changes: existing top-level APIs delegate to Core.
   // ---------------------------------------------------------------------
   Core: {
+    // Initialize core runtime: build reverse maps, set messages and wire hook
+    init: function () {
+      // Build reverse Wikidata map if source map exists
+      if (OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP) {
+        OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
+          Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function (
+            entry
+          ) {
+            return [entry[1], entry[0]];
+          })
+        );
+      }
+
+      // Delegate message selection to I18n module
+      OWIDSlider.I18n.setMessages();
+      // Keep original hook behaviour
+      mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
+    },
+
+    // Small helper to parse current URL query string into an object
+    parseQueryParams: function () {
+      return Object.fromEntries(new URLSearchParams(location.search));
+    },
+  }, // end Core
+
+  // ---------------------------------------------------------------------
+  // OWIDSlider.I18n
+  // Purpose: centralize translations and message selection logic so it can be tested independently.
+  // ---------------------------------------------------------------------
+  I18n: {
     // Start translations. Add new languages under the appropriate language code.
     messages: {
       en: {
@@ -39,63 +88,40 @@ var OWIDSlider = {
         OWIDSliderLoading: "Завантаження... $1%",
       },
     },
-
-    // Initialize core runtime: build reverse maps, set messages and wire hook
-    init: function () {
-      // Build reverse Wikidata map if source map exists
-      if (OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP) {
-        OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
-          Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function (
-            entry
-          ) {
-            return [entry[1], entry[0]];
-          })
-        );
-      }
-
-      OWIDSlider.Core.setMessages();
-      // Keep original hook behaviour
-      mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
-    },
+    // End translations
 
     // Set the interface messages in the most appropriate language
     // Favor user language, then page content language, then site content language, then English.
     setMessages: function () {
       var userLanguage = mw.config.get("wgUserLanguage");
-      if (userLanguage in OWIDSlider.Core.messages) {
-        mw.messages.set(OWIDSlider.Core.messages[userLanguage]);
+      if (userLanguage in OWIDSlider.I18n.messages) {
+        mw.messages.set(OWIDSlider.I18n.messages[userLanguage]);
         return;
       }
       var pageLanguage = mw.config.get("wgPageContentLanguage");
-      if (pageLanguage in OWIDSlider.Core.messages) {
-        mw.messages.set(OWIDSlider.Core.messages[pageLanguage]);
+      if (pageLanguage in OWIDSlider.I18n.messages) {
+        mw.messages.set(OWIDSlider.I18n.messages[pageLanguage]);
         return;
       }
       var contentLanguage = mw.config.get("wgContentLanguage");
-      if (contentLanguage in OWIDSlider.Core.messages) {
-        mw.messages.set(OWIDSlider.Core.messages[contentLanguage]);
+      if (contentLanguage in OWIDSlider.I18n.messages) {
+        mw.messages.set(OWIDSlider.I18n.messages[contentLanguage]);
         return;
       }
-      mw.messages.set(OWIDSlider.Core.messages.en);
+      mw.messages.set(OWIDSlider.I18n.messages.en);
     },
-
-    // Small helper to parse current URL query string into an object
-    parseQueryParams: function () {
-      return Object.fromEntries(new URLSearchParams(location.search));
-    },
-  }, // end Core
+  }, // end I18n
 
   // ---------------------------------------------------------------------
   // Backwards-compatible top-level delegations (minimal change)
-  // These allow existing internal code and external tests to call OWIDSlider.init, setMessages, parseQueryParams
-  // while the implementation lives in OWIDSlider.Core for easier unit testing.
   // ---------------------------------------------------------------------
   init: function () {
     return OWIDSlider.Core.init();
   },
 
   setMessages: function () {
-    return OWIDSlider.Core.setMessages();
+    // preserve older API surface
+    return OWIDSlider.I18n.setMessages();
   },
 
   parseQueryParams: function () {
@@ -104,15 +130,13 @@ var OWIDSlider = {
 
   // Expose messages at top-level for compatibility (tests may reference OWIDSlider.messages)
   get messages() {
-    return OWIDSlider.Core.messages;
+    return OWIDSlider.I18n.messages;
   },
 
   // ---------------------------------------------------------------------
   // The rest of the original object (country maps, APIs, UI, Context, etc.)
   // remains unchanged below. Keep references and function names intact so behaviour is preserved.
   // ---------------------------------------------------------------------
-
-  // End translations
 
  OWID_COUNTRY_CODES: {
   Afghanistan: "AFG",
@@ -571,16 +595,16 @@ var OWIDSlider = {
   "monaco": "Q235"
  },
 
-
-  init: function () {
-	OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
-		Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function([key, value]) {
-    		return [value, key];
-		})
-	);
-    OWIDSlider.setMessages();
-    mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
-  },
+  // Moved to Core
+  // init: function () {
+	// OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
+	// 	Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function([key, value]) {
+  //   		return [value, key];
+	// 	})
+	// );
+  //   OWIDSlider.setMessages();
+  //   mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
+  // },
 	
   purify: function (dirty) {
     // We use SVGs in an html context not XML, so we need to be sure they are safe.
@@ -605,32 +629,38 @@ var OWIDSlider = {
     DOMPurify.removeHook( 'uponSanitizeElement' );
     return res;
    },
+
+  // Moved to I18n
   /**
    * Set the interface messages in the most appropriate language
    *
    * Favor the user language first, the page language second, the wiki language third, and lastly English
    */
-  setMessages: function () {
-    var userLanguage = mw.config.get("wgUserLanguage");
-    if (userLanguage in OWIDSlider.messages) {
-      mw.messages.set(OWIDSlider.messages[userLanguage]);
-      return;
-    }
-    var pageLanguage = mw.config.get("wgPageContentLanguage");
-    if (pageLanguage in OWIDSlider.messages) {
-      mw.messages.set(OWIDSlider.messages[pageLanguage]);
-      return;
-    }
-    var contentLanguage = mw.config.get("wgContentLanguage");
-    if (contentLanguage in OWIDSlider.messages) {
-      mw.messages.set(OWIDSlider.messages[contentLanguage]);
-      return;
-    }
-    mw.messages.set(OWIDSlider.messages.en);
-  },
-  parseQueryParams: function () {
-	return Object.fromEntries( new URLSearchParams( location.search ) );
-  },
+
+  // Moved to I18n
+  // setMessages: function () {
+  //   var userLanguage = mw.config.get("wgUserLanguage");
+  //   if (userLanguage in OWIDSlider.messages) {
+  //     mw.messages.set(OWIDSlider.messages[userLanguage]);
+  //     return;
+  //   }
+  //   var pageLanguage = mw.config.get("wgPageContentLanguage");
+  //   if (pageLanguage in OWIDSlider.messages) {
+  //     mw.messages.set(OWIDSlider.messages[pageLanguage]);
+  //     return;
+  //   }
+  //   var contentLanguage = mw.config.get("wgContentLanguage");
+  //   if (contentLanguage in OWIDSlider.messages) {
+  //     mw.messages.set(OWIDSlider.messages[contentLanguage]);
+  //     return;
+  //   }
+  //   mw.messages.set(OWIDSlider.messages.en);
+  // },
+
+  // Moved to Core
+  // parseQueryParams: function () {
+	// return Object.fromEntries( new URLSearchParams( location.search ) );
+  // },
 
   /**
    * Append a play button ► to every OWIDSlider div
@@ -1774,6 +1804,7 @@ parseSVGDetails: function (svgDetails) {
         })
         .then(function (svgData) {
           svgData = OWIDSlider.purify( svgData );
+
           that.cachedSvgs[svgUrl] = svgData;
           that.onUrlLoaded();
           resolve(true);
@@ -1798,7 +1829,7 @@ parseSVGDetails: function (svgDetails) {
       accumilator.push(arr[i]);
     }
     if (accumilator.length > 0) {
-      chunks.push(accumilator);
+      chunks.push(accumulator);
       accumilator = [];
     }
 
