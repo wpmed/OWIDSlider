@@ -1,38 +1,116 @@
 // Script written by Hassan.m.amin for WikiProject Med Foundation based on earlier OWIDSlider script by Bawolff and Hellerhoff.
 
 var OWIDSlider = {
-  // Start translations. Add new languages under the appropriate language code.
-  messages: {
-    en: {
-      OWIDSliderFrameBack: "Back",
-      OWIDSliderFrameBackDesktop: "Return to article",
-      OWIDSliderFrameImageCredit: "Media credits",
-      OWIDSliderFrameCopyLink: "Copy Direct Link",
-      OWIDSliderSliderLabel: "Select image",
-      OWIDSliderSelectRegion: "Select region",
-      OWIDSliderPlayLabel: "Show slideshow",
-      OWIDSliderLoading: "Loading... $1%",
+  // ---------------------------------------------------------------------
+  // OWIDSlider.Core
+  // Purpose: init, configuration and i18n helpers grouped for easier testing.
+  // Minimal behavioural changes: existing top-level APIs delegate to Core.
+  // ---------------------------------------------------------------------
+  Core: {
+    // Start translations. Add new languages under the appropriate language code.
+    messages: {
+      en: {
+        OWIDSliderFrameBack: "Back",
+        OWIDSliderFrameBackDesktop: "Return to article",
+        OWIDSliderFrameImageCredit: "Media credits",
+        OWIDSliderFrameCopyLink: "Copy Direct Link",
+        OWIDSliderSliderLabel: "Select image",
+        OWIDSliderSelectRegion: "Select region",
+        OWIDSliderPlayLabel: "Show slideshow",
+        OWIDSliderLoading: "Loading... $1%",
+      },
+      eu: {
+        OWIDSliderFrameBack: "Atzera",
+        OWIDSliderFrameBackDesktop: "Artikulura itzuli",
+        OWIDSliderFrameImageCredit: "Irudien kredituak",
+        OWIDSliderFrameCopyLink: "Lotura zuzena kopiatu",
+        OWIDSliderSliderLabel: "Irudia aukeratu",
+        OWIDSliderSelectRegion: "Eskualdea aukeratu",
+        OWIDSliderPlayLabel: "Irudien sorta erakutsi",
+        OWIDSliderLoading: "Kargatzen... $1%",
+      },
+      uk: {
+        OWIDSliderFrameBack: "Назад",
+        OWIDSliderFrameBackDesktop: "Повернутись до статті",
+        OWIDSliderFrameImageCredit: "Інформація про авторство",
+        OWIDSliderFrameCopyLink: "Копіювати пряме посилання",
+        OWIDSliderSliderLabel: "Вибрати зображення",
+        OWIDSliderPlayLabel: "Показати слайдшоу",
+        OWIDSliderLoading: "Завантаження... $1%",
+      },
     },
-    eu: {
-      OWIDSliderFrameBack: "Atzera",
-      OWIDSliderFrameBackDesktop: "Artikulura itzuli",
-      OWIDSliderFrameImageCredit: "Irudien kredituak",
-      OWIDSliderFrameCopyLink: "Lotura zuzena kopiatu",
-      OWIDSliderSliderLabel: "Irudia aukeratu",
-      OWIDSliderSelectRegion: "Eskualdea aukeratu",
-      OWIDSliderPlayLabel: "Irudien sorta erakutsi",
-      OWIDSliderLoading: "Kargatzen... $1%",
+
+    // Initialize core runtime: build reverse maps, set messages and wire hook
+    init: function () {
+      // Build reverse Wikidata map if source map exists
+      if (OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP) {
+        OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
+          Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function (
+            entry
+          ) {
+            return [entry[1], entry[0]];
+          })
+        );
+      }
+
+      OWIDSlider.Core.setMessages();
+      // Keep original hook behaviour
+      mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
     },
-    uk: {
-      OWIDSliderFrameBack: "Назад",
-      OWIDSliderFrameBackDesktop: "Повернутись до статті",
-      OWIDSliderFrameImageCredit: "Інформація про авторство",
-      OWIDSliderFrameCopyLink: "Копіювати пряме посилання",
-      OWIDSliderSliderLabel: "Вибрати зображення",
-      OWIDSliderPlayLabel: "Показати слайдшоу",
-      OWIDSliderLoading: "Завантаження... $1%",
+
+    // Set the interface messages in the most appropriate language
+    // Favor user language, then page content language, then site content language, then English.
+    setMessages: function () {
+      var userLanguage = mw.config.get("wgUserLanguage");
+      if (userLanguage in OWIDSlider.Core.messages) {
+        mw.messages.set(OWIDSlider.Core.messages[userLanguage]);
+        return;
+      }
+      var pageLanguage = mw.config.get("wgPageContentLanguage");
+      if (pageLanguage in OWIDSlider.Core.messages) {
+        mw.messages.set(OWIDSlider.Core.messages[pageLanguage]);
+        return;
+      }
+      var contentLanguage = mw.config.get("wgContentLanguage");
+      if (contentLanguage in OWIDSlider.Core.messages) {
+        mw.messages.set(OWIDSlider.Core.messages[contentLanguage]);
+        return;
+      }
+      mw.messages.set(OWIDSlider.Core.messages.en);
     },
+
+    // Small helper to parse current URL query string into an object
+    parseQueryParams: function () {
+      return Object.fromEntries(new URLSearchParams(location.search));
+    },
+  }, // end Core
+
+  // ---------------------------------------------------------------------
+  // Backwards-compatible top-level delegations (minimal change)
+  // These allow existing internal code and external tests to call OWIDSlider.init, setMessages, parseQueryParams
+  // while the implementation lives in OWIDSlider.Core for easier unit testing.
+  // ---------------------------------------------------------------------
+  init: function () {
+    return OWIDSlider.Core.init();
   },
+
+  setMessages: function () {
+    return OWIDSlider.Core.setMessages();
+  },
+
+  parseQueryParams: function () {
+    return OWIDSlider.Core.parseQueryParams();
+  },
+
+  // Expose messages at top-level for compatibility (tests may reference OWIDSlider.messages)
+  get messages() {
+    return OWIDSlider.Core.messages;
+  },
+
+  // ---------------------------------------------------------------------
+  // The rest of the original object (country maps, APIs, UI, Context, etc.)
+  // remains unchanged below. Keep references and function names intact so behaviour is preserved.
+  // ---------------------------------------------------------------------
 
   // End translations
 
