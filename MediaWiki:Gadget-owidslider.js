@@ -21,37 +21,6 @@
 
 var OWIDSlider = {
   // ---------------------------------------------------------------------
-  // OWIDSlider.Core
-  // Purpose: init, configuration and i18n helpers grouped for easier testing.
-  // Minimal behavioural changes: existing top-level APIs delegate to Core.
-  // ---------------------------------------------------------------------
-  Core: {
-    // Initialize core runtime: build reverse maps, set messages and wire hook
-    init: function () {
-      // Build reverse Wikidata map if source map exists
-      if (OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP) {
-        OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
-          Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function (
-            entry
-          ) {
-            return [entry[1], entry[0]];
-          })
-        );
-      }
-
-      // Delegate message selection to I18n module
-      OWIDSlider.I18n.setMessages();
-      // Keep original hook behaviour
-      mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
-    },
-
-    // Small helper to parse current URL query string into an object
-    parseQueryParams: function () {
-      return Object.fromEntries(new URLSearchParams(location.search));
-    },
-  }, // end Core
-
-  // ---------------------------------------------------------------------
   // OWIDSlider.I18n
   // Purpose: centralize translations and message selection logic so it can be tested independently.
   // ---------------------------------------------------------------------
@@ -111,6 +80,40 @@ var OWIDSlider = {
       mw.messages.set(OWIDSlider.I18n.messages.en);
     },
   }, // end I18n
+
+
+  // ---------------------------------------------------------------------
+  // OWIDSlider.Core
+  // Purpose: init, configuration and i18n helpers grouped for easier testing.
+  // Minimal behavioural changes: existing top-level APIs delegate to Core.
+  // ---------------------------------------------------------------------
+  Core: {
+    // Initialize core runtime: build reverse maps, set messages and wire hook
+    init: function () {
+      // Build reverse Wikidata map if source map exists
+      if (OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP) {
+        OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
+          Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function (
+            entry
+          ) {
+            return [entry[1], entry[0]];
+          })
+        );
+      }
+
+      // Delegate message selection to I18n module
+      OWIDSlider.I18n.setMessages();
+      // Keep original hook behaviour
+      mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
+    },
+
+    // Small helper to parse current URL query string into an object
+    parseQueryParams: function () {
+      return Object.fromEntries(new URLSearchParams(location.search));
+    },
+  }, // end Core
+
+
 
   // ---------------------------------------------------------------------
   // Backwards-compatible top-level delegations (minimal change)
