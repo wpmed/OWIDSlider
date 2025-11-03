@@ -156,6 +156,16 @@ var OWIDSlider = {
         OWIDSliderPlayLabel: "显示幻灯片",
         OWIDSliderLoading: "加载中... $1%",
       },
+      cz: {
+        OWIDSliderFrameBack: "Zpět",
+        OWIDSliderFrameBackDesktop: "Zpět na článek",
+        OWIDSliderFrameImageCredit: "Zdroje médií",
+        OWIDSliderFrameCopyLink: "Kopírovat přímý odkaz",
+        OWIDSliderSliderLabel: "Vybrat obrázek",
+        OWIDSliderSelectRegion: "Vybrat oblast",
+        OWIDSliderPlayLabel: "Zobrazit prezentaci",
+        OWIDSliderLoading: "Načítání... $1%",
+      },
     },
     // End translations
 
