@@ -2534,14 +2534,16 @@ populateTranslatedCountriesNames: function() {
     this.$svgContainer.html("").append(scaledContent);
     
     // Back content
+    // Use the same, more descriptive label as the main dialog ("Return to article")
+    var backLabel = mw.msg("OWIDSliderFrameBackDesktop");
     var $back = $("<button></button>")
       .attr({
         type: "button",
         class: "OWIDSlider-country-back",
-        title: mw.msg("OWIDSliderFrameBack"),
-        "aria-label": mw.msg("OWIDSliderFrameBack"),
+        title: backLabel,
+        "aria-label": backLabel,
       })
-      .text(mw.msg("OWIDSliderFrameBack"));
+      .text(backLabel);
     var $backContainer = $("<div></div>")
       .attr({ class: "OWIDSlider-country-back-container" })
       .append($back);
@@ -2554,7 +2556,7 @@ populateTranslatedCountriesNames: function() {
 		$backContainer.remove();
         setTimeout(
           function () {
-			this.$countrySelect.css("display", "inline-block");
+            this.$countrySelect.css("display", "inline-block");
             this.initSVGControls();
           }.bind(this),
           100
