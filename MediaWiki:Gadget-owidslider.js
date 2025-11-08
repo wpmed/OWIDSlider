@@ -169,7 +169,7 @@ var OWIDSlider = {
       vt: {
         OWIDSliderFrameBack: "Quay lại",
         OWIDSliderFrameBackDesktop: "Quay lại bài viết",
-        OWIDSliderFrameImageCredit: "Tín dụng phương tiện",
+        OWIDSliderFrameImageCredit: "Nguồn hình ảnh",
         OWIDSliderFrameCopyLink: "Sao chép liên kết trực tiếp",
         OWIDSliderSliderLabel: "Chọn hình ảnh",
         OWIDSliderSelectRegion: "Chọn khu vực",
