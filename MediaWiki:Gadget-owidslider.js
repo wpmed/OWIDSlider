@@ -1677,14 +1677,19 @@ OWIDSlider.Context.prototype = {
         $( '#details-popup.owid-details-hover' ).remove();
       } );
       infoIcon.on("click" + ( !isMobile ? " mouseenter" : "" ), function (e) {
-		// Close old popup if it is currently open.
-		var oldPopup = $( '#details-popup' );
-		// If its a hover don't close old popup or open a new one if popup already exists.
-		if ( oldPopup.length && e.type === 'mouseenter' ) {
-			return
-		}
-		oldPopup.remove();
-        var popup = $("<div>")
+        // Prevent click/tap from bubbling to underlying UI (fixes mobile taps opening the region selector)
+        e.stopPropagation();
+        if ( e.type === 'click' ) {
+          e.preventDefault();
+        }
+         // Close old popup if it is currently open.
+         var oldPopup = $( '#details-popup' );
+         // If its a hover don't close old popup or open a new one if popup already exists.
+         if ( oldPopup.length && e.type === 'mouseenter' ) {
+           return
+         }
+         oldPopup.remove();
+         var popup = $("<div>")
           .css("position", "absolute")
           .css("background-color", "white")
           .css("color", "black")
