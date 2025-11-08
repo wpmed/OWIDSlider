@@ -1459,34 +1459,60 @@ OWIDSlider.Context.prototype = {
 
   toggleImg: function () {
     this.pendingFrame = true;
-    if (this.prevImage < this.currentImage) {
-      while (
-        this.currentImage < this.max &&
-        !this.imgs[this.currentView][this.currentImage]
-      ) {
-        this.currentImage++;
+
+    var target = this.currentImage;
+    var imgsForView = this.imgs[this.currentView];
+
+    // If the exact target has data, nothing to do.
+    if (!imgsForView[target]) {
+      var found = null;
+
+      // Prefer the direction the user moved the slider:
+      if (this.prevImage < target) {
+        // Search forward first
+        for (var i = target; i <= this.max; i++) {
+          if (imgsForView[i]) {
+            found = i;
+            break;
+          }
+        }
+        // If not found, search backward
+        if (found === null) {
+          for (var i = target - 1; i >= this.min; i--) {
+            if (imgsForView[i]) {
+              found = i;
+              break;
+            }
+          }
+        }
+      } else {
+        // User moved slider backward — search backward first
+        for (var i = target; i >= this.min; i--) {
+          if (imgsForView[i]) {
+            found = i;
+            break;
+          }
+        }
+        // If not found, search forward
+        if (found === null) {
+          for (var i = target + 1; i <= this.max; i++) {
+            if (imgsForView[i]) {
+              found = i;
+              break;
+            }
+          }
+        }
       }
-      // If we get to the end and its still not valid
-      while (
-        this.currentImage > this.min &&
-        !this.imgs[this.currentView][this.currentImage]
-      ) {
-        this.currentImage--;
-      }
-    } else {
-      while (
-        this.currentImage > this.min &&
-        !this.imgs[this.currentView][this.currentImage]
-      ) {
-        this.currentImage--;
-      }
-      while (
-        this.currentImage < this.max &&
-        !this.imgs[this.currentView][this.currentImage]
-      ) {
-        this.currentImage++;
+
+      // If we found a valid year, use it; otherwise clamp into range
+      if (found !== null) {
+        this.currentImage = found;
+      } else {
+        this.currentImage = Math.max(this.min, Math.min(this.currentImage, this.max));
       }
     }
+
+    // Handle looping / clamping
     if (this.loop) {
       if (this.currentImage < this.min) {
         this.currentImage = this.max;
@@ -1500,6 +1526,7 @@ OWIDSlider.Context.prototype = {
         this.currentImage = this.max;
       }
     }
+
     this.prevImage = this.currentImage;
     this.$slider[0].value = this.currentImage;
     this.$slider[0].title = this.currentImage;
@@ -1518,10 +1545,8 @@ OWIDSlider.Context.prototype = {
     this.$sliderYearPopup.text(this.currentImage);
     var popupWidth = this.$sliderYearPopup.width() || 35;
     if (popupWidth > 0) {
-      var popupLeft =
-        ((this.currentImage - this.min) / (this.max - this.min)) * 100;
-      var calculatedPopupLeft =
-        "calc(" + popupLeft + "% " + "- " + (popupWidth / 2 + 10) + "px)";
+      var popupLeft = ((this.currentImage - this.min) / (this.max - this.min)) * 100;
+      var calculatedPopupLeft = "calc(" + popupLeft + "% " + "- " + (popupWidth / 2 + 10) + "px)";
       this.$sliderYearPopup
         .css("visibility", "visible")
         .css("left", calculatedPopupLeft);
