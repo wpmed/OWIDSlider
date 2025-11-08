@@ -166,6 +166,16 @@ var OWIDSlider = {
         OWIDSliderPlayLabel: "Zobrazit prezentaci",
         OWIDSliderLoading: "Načítání... $1%",
       },
+      vt: {
+        OWIDSliderFrameBack: "Quay lại",
+        OWIDSliderFrameBackDesktop: "Quay lại bài viết",
+        OWIDSliderFrameImageCredit: "Tín dụng phương tiện",
+        OWIDSliderFrameCopyLink: "Sao chép liên kết trực tiếp",
+        OWIDSliderSliderLabel: "Chọn hình ảnh",
+        OWIDSliderSelectRegion: "Chọn khu vực",
+        OWIDSliderPlayLabel: "Hiển thị trình chiếu",
+        OWIDSliderLoading: "Đang tải... $1%",
+      }
     },
     // End translations
 
