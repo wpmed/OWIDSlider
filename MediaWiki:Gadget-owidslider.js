@@ -47,6 +47,16 @@ var OWIDSlider = {
         OWIDSliderPlayLabel: "Irudien sorta erakutsi",
         OWIDSliderLoading: "Kargatzen... $1%",
       },
+      id: {
+        OWIDSliderFrameBack: "Kembali",
+        OWIDSliderFrameBackDesktop: "Kembali ke artikel",
+        OWIDSliderFrameImageCredit: "Kredit media",
+        OWIDSliderFrameCopyLink: "Salin pranala langsung",
+        OWIDSliderSliderLabel: "Pilih gambar",
+        OWIDSliderSelectRegion: "Pilih wilayah",
+        OWIDSliderPlayLabel: "Tampilkan tayangan salindia",
+        OWIDSliderLoading: "Memuat... $1%",
+      },
       uk: {
         OWIDSliderFrameBack: "Назад",
         OWIDSliderFrameBackDesktop: "Повернутись до статті",
