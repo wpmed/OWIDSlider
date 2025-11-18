@@ -1958,17 +1958,17 @@ parseSVGDetails: function (svgDetails) {
     var chunks = [];
 
     var chunk_size = 2;
-    var accumilator = [];
+    var accumulator = [];
     for (var i = 0; i < arr.length; i++) {
-      if (accumilator.length >= chunk_size) {
-        chunks.push(accumilator);
-        accumilator = [];
+      if (accumulator.length >= chunk_size) {
+        chunks.push(accumulator);
+        accumulator = [];
       }
-      accumilator.push(arr[i]);
+      accumulator.push(arr[i]);
     }
-    if (accumilator.length > 0) {
+    if (accumulator.length > 0) {
       chunks.push(accumulator);
-      accumilator = [];
+      accumulator = [];
     }
 
     return chunks.reduce(function (p, v) {
