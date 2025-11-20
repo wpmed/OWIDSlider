@@ -1897,8 +1897,8 @@ parseSVGDetails: function (svgDetails) {
    			   			
    			// preserve the translations from the World map
     		if (that.currentView.toLowerCase() == "world" || (switches.length > 0 && !that.worldTitle)) {
-				that.worldTitle = svgDoc.querySelector("#header a text tspan").textContent;
-    			that.worldSubtitle = svgDoc.querySelector("#header #subtitle text tspan").textContent;
+			that.worldTitle = svgDoc.querySelector("#header a text tspan") ? svgDoc.querySelector("#header a text tspan").textContent : '';
+			that.worldSubtitle = svgDoc.querySelector("#header #subtitle text tspan") ? svgDoc.querySelector("#header #subtitle text tspan").textContent : '';
      			that.worldDetails = svgDoc.querySelector("#details");
     			that.worldLabels = svgDoc.querySelector("#labels");
     		} else {
