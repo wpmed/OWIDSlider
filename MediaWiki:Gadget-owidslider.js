@@ -4,8 +4,9 @@
  * Purpose:
  *   Provide a self-contained OWIDSlider functionality used to
  *   preview OWID SVG image stacks with a timeline slider, per-country charts
- *   and lightweight translation support. Intended for testing, debugging and
- *   local development outside the main repository.
+ *   and lightweight translation support.
+ *
+ * Canonical Repo: https://github.com/wpmed/OWIDSlider
  *
  * Authors: Hellerhoff, Bawolff,Hassan M. Amin
  * Contributors: Booksmurf
