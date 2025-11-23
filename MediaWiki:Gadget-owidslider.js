@@ -29,7 +29,7 @@ var OWIDSlider = {
     // Start translations. Add new languages under the appropriate language code.
     messages: {
       en: {
-        OWIDSliderFrameBack: "Back",
+        OWIDSliderFrameBack: "Return to map",
         OWIDSliderFrameBackDesktop: "Return to article",
         OWIDSliderFrameImageCredit: "Media credits",
         OWIDSliderFrameCopyLink: "Copy Direct Link",
@@ -873,20 +873,17 @@ var OWIDSlider = {
   showFrame: function (data) {
     // Load dependencies
     var stateWindow = mw.loader.getState("oojs-ui-windows");
-    var stateDomPurify = mw.loader.getState("dompurify");
+    // In recent MW VE, DOMPurify is not a top level module.
+    var stateDomPurify = mw.loader.getState("ext.visualEditor.core");
     if (stateWindow !== "ready" || stateDomPurify !== "ready") {
-      mw.loader.using(["oojs-ui-windows", "dompurify"], function () {
-        setTimeout(function () {
+      mw.loader.using(["oojs-ui-windows", "ext.visualEditor.core"], function () {
           OWIDSlider.showFrame(data);
-        }, 500);
       });
       return;
     }
     var $viewer = OWIDSlider.getViewer();
-    var backButtonTitle = mw.msg("OWIDSliderFrameBack");
-    if (window.outerWidth > 600) {
-      backButtonTitle = mw.msg("OWIDSliderFrameBackDesktop");
-    }
+    backButtonTitle = mw.msg("OWIDSliderFrameBackDesktop");
+
 
     var config = {
       size: "full",
@@ -2538,8 +2535,7 @@ populateTranslatedCountriesNames: function() {
     this.$svgContainer.html("").append(scaledContent);
 
     // Back content
-    // Use the same, more descriptive label as the main dialog ("Return to article")
-    var backLabel = mw.msg("OWIDSliderFrameBackDesktop");
+    var backLabel = mw.msg("OWIDSliderFrameBack");
     var $back = $("<button></button>")
       .attr({
         type: "button",
