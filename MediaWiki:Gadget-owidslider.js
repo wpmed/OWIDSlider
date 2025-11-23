@@ -739,7 +739,7 @@ var OWIDSlider = {
   //   OWIDSlider.setMessages();
   //   mw.hook("wikipage.content").add(OWIDSlider.addPlayButton);
   // },
-	
+
   purify: function (dirty) {
     // We use SVGs in an html context not XML, so we need to be sure they are safe.
     // This is a bit stricter than necessary, but owid graphs should have all this.
@@ -837,7 +837,7 @@ var OWIDSlider = {
 				if (data.language && data.language != "") {
 					newUrl.searchParams.set("owid_language", encodeURIComponent(data.language));
 				}
-				
+
 				window.history.pushState({}, "", newUrl);
 				OWIDSlider.showFrame(data);
               } else {
@@ -915,7 +915,7 @@ var OWIDSlider = {
     	var newUrl = new URL(window.location.href);
 		newUrl.searchParams.delete("owid_list");
 		newUrl.searchParams.delete("owid_language");
-				
+
 		window.history.pushState({}, "", newUrl);
     });
     win.closed.done(function () {
@@ -952,7 +952,7 @@ var OWIDSlider = {
 		    ajax: {
 		        url: 'https://commons.wikimedia.org/w/api.php'
 		    }
-		});		
+		});
 		api.get({
 		    action: 'parse',
 		    page: data.list,
@@ -1437,7 +1437,7 @@ OWIDSlider.Context.prototype = {
     //this.toggleImg();
     this.preload();
     if (this.language && this.language != "en") {
-        this.populateTranslatedCountriesNames();	
+        this.populateTranslatedCountriesNames();
     }
     this.$slider.focus();
   },
@@ -1620,7 +1620,7 @@ OWIDSlider.Context.prototype = {
     		}
     	}
     }
-	
+
     svgEl.removeAttr("width");
     svgEl.removeAttr("height");
     var windowWidth = window.outerWidth;
@@ -1628,7 +1628,7 @@ OWIDSlider.Context.prototype = {
     // if (isMobile) {
     // 	svgEl.attr("width", "100%");
     // } else {
-    // 	svgEl.attr("height", "70vh");	
+    // 	svgEl.attr("height", "70vh");
     // }
     svgEl.css("max-width", "100%").css("max-height", "70vh");
     // Update the viewBox
@@ -1740,7 +1740,7 @@ parseSVGDetails: function (svgDetails) {
 
       // Extract the first line which contains the number and title
       const firstLine = tspans.first().text();
-      
+
       // Try to match pattern with colon first: "1. Title: Description"
       var titleMatch = firstLine.match(/^(\d+)\.\s+([^:]+):\s*(.*)/);
       var number, title, firstLineContent;
@@ -1769,7 +1769,7 @@ parseSVGDetails: function (svgDetails) {
           }
         }
       }
-      
+
       if (number && title) {
         // Get additional content from subsequent tspans (exclude the repeated title/number)
         var additionalContent = "";
@@ -1780,10 +1780,10 @@ parseSVGDetails: function (svgDetails) {
             additionalContent += " " + text.trim();
           }
         });
-        
+
         // Combine for full description
         const fullDescription = (firstLineContent + additionalContent).trim();
-        
+
         // Add to JSON structure
         details.push({
           id: number,
@@ -1811,7 +1811,7 @@ parseSVGDetails: function (svgDetails) {
     		currentSubtitle.textContent = this.worldSubtitle;
     	}
     }
-    			
+
     if (this.worldDetails) {
     	var currentDetails = svgDoc.querySelector("#details");
     	if (currentDetails) {
@@ -1850,7 +1850,7 @@ parseSVGDetails: function (svgDetails) {
 		// Then let's purify
 		svgData = OWIDSlider.purify(svgData);
 		svgData = svgData.replaceAll("&nbsp;", "");
-		
+
 		parser = new DOMParser();
     	svgDoc = parser.parseFromString(svgData, "image/svg+xml");
     	if (years.length > 0) {
@@ -1892,7 +1892,7 @@ parseSVGDetails: function (svgDetails) {
    					sw.appendChild(enOption);
    				}
    			});
-   			   			
+
    			// preserve the translations from the World map
     		if (that.currentView.toLowerCase() == "world" || (switches.length > 0 && !that.worldTitle)) {
 			that.worldTitle = svgDoc.querySelector("#header a text tspan") ? svgDoc.querySelector("#header a text tspan").textContent : '';
@@ -2029,7 +2029,7 @@ parseSVGDetails: function (svgDetails) {
       }
     }
   },
-  
+
   removeLoadingState: function() {
   	this.urlsLoaded = this.total;
   	this.$viewer.removeClass("OWIDSlider-loading");
@@ -2362,28 +2362,28 @@ populateTranslatedCountriesNames: function() {
     var that = this;
     const chunkSize = 45;
     const chunks = [];
-    
+
     // Split countryIds into chunks
     for (let i = 0; i < countryIds.length; i += chunkSize) {
         chunks.push(countryIds.slice(i, i + chunkSize));
     }
-    
+
     // Process all chunks in parallel with staggered delays
     const chunkPromises = chunks.map((chunk, index) => {
         // Stagger the requests slightly to avoid overwhelming the server
         const delay = index * 50; // 50ms between each chunk start
-        
+
         return new Promise(resolve => setTimeout(resolve, delay)).then(() => {
             const ids = chunk.join('|');
             const url = `https://www.wikidata.org/w/api.php?action=wbgetentities&ids=${ids}&format=json&props=labels&languages=${that.language}`;
-            
+
             var api = new mw.Api({
 				userAgent: 'OWIDSlider',
                 ajax: {
                     url: 'https://www.wikidata.org/w/api.php'
                 }
             });
-            
+
             return api.get({
                 action: 'wbgetentities',
                 ids: ids,
@@ -2405,14 +2405,14 @@ populateTranslatedCountriesNames: function() {
             });
         });
     });
-    
+
     // Wait for all chunks to complete and merge results
     return Promise.all(chunkPromises).then(function(allChunkResults) {
         // Merge all chunk results into a single object
         const accumResults = allChunkResults.reduce(function(acc, chunkResult) {
             return Object.assign(acc, chunkResult);
         }, {});
-        
+
         // Process the accumulated results
         Object.entries(accumResults).forEach(function(entry) {
             if (entry[1][that.language]) {
@@ -2422,7 +2422,7 @@ populateTranslatedCountriesNames: function() {
             }
         });
         that.toggleImg();
-        
+
         return accumResults;
     }).catch(error => {
         console.error('Error processing translation chunks:', error);
@@ -2442,7 +2442,7 @@ populateTranslatedCountriesNames: function() {
 	  	if (that.translatedCountryNames[name]) {
 	  		return resolve(that.translatedCountryNames[name]);
 	  	}
-	  	
+
 	  	var countryCode = OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP[name];
 	  	var url = "https://www.wikidata.org/w/rest.php/wikibase/v1/entities/items/" + countryCode + "/labels";
 	  	fetch(url, {
@@ -2482,7 +2482,7 @@ populateTranslatedCountriesNames: function() {
 	    		if (titleParts.length > 1) {
 	    			titleParts.pop();
 	    		}
-	    		headerSpan.text(titleParts.join(","));			
+	    		headerSpan.text(titleParts.join(","));
     		}
 		}
 
@@ -2499,7 +2499,7 @@ populateTranslatedCountriesNames: function() {
 	    		currentDetails[0].replaceWith(this.worldDetails);
 	    	}
 	    }
-	    
+
 	    // Handle translation
 	    if (this.language && this.language != "en") {
 	    	var countryLabel = scaledContent.find("#text-labels text tspan");
@@ -2530,7 +2530,7 @@ populateTranslatedCountriesNames: function() {
       e.stopPropagation();
     });
     this.$svgContainer.html("").append(scaledContent);
-    
+
     // Back content
     var backLabel = mw.msg("OWIDSliderFrameBack");
     var $back = $("<button></button>")
