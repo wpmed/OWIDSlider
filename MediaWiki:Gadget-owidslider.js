@@ -1294,6 +1294,16 @@ OWIDSlider.Context.prototype = {
     }).on("input", function (e) {
       that.currentImage = parseInt(e.target.value);
       that.repaint();
+    }).on("mousedown", function(e) {
+      that.mouseIsPressed = true;
+    }).on("mouseup", function(e) {
+      that.mouseIsPressed = false;
+      that.$slider[0].value = that.currentImage;
+    }).on("touchstart", function(e) {
+      that.mouseIsPressed = true;
+    }).on("touchend", function(e) {
+      that.mouseIsPressed = false;
+      that.$slider[0].value = that.currentImage;
     });
     this.$sliderYearPopup = $("<span></span>", {
       class: "OWIDSliderSliderYearPopup",
@@ -1512,7 +1522,10 @@ OWIDSlider.Context.prototype = {
       }
     }
     this.prevImage = this.currentImage;
-    this.$slider[0].value = this.currentImage;
+    // Only update slider value if mouse is not currently pressed
+    if (!this.mouseIsPressed) {
+      this.$slider[0].value = this.currentImage;
+    }
     this.$slider[0].title = this.currentImage;
     this.$credit[0].href = this.infoUrls[this.currentView][this.currentImage];
     if (this.infoUrls[this.currentView][this.currentImage] === false) {
