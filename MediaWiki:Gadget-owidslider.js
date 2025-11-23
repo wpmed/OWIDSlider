@@ -1248,7 +1248,9 @@ var OWIDSlider = {
     this.imgWidth = width;
     this.imgHeight = height;
     this.currentImage =
-      this.start >= this.min && this.start <= this.max ? this.start : this.max;
+      this.mostRecent
+        ? this.max
+        : this.start >= this.min && this.start <= this.max ? this.start : this.max;
     this.pendingFrame = false;
     this.$loading = $("#OWIDSliderLoading");
     this.urlsLoaded = 0;
