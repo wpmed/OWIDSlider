@@ -1213,6 +1213,7 @@ var OWIDSlider = {
     this.countriesInfoUrls = countriesInfoUrls;
     this.translatedCountryNames = Object.create(null);
     this.$viewer = $viewer;
+    this.mostRecent = !!config.mostRecent;
     this.loop = !!config.loop;
     this.start = typeof config.start === "number" ? config.start : 0;
     this.urls = null;
@@ -1244,7 +1245,9 @@ var OWIDSlider = {
     this.imgWidth = width;
     this.imgHeight = height;
     this.currentImage =
-      this.start >= this.min && this.start <= this.max ? this.start : this.max;
+      this.mostRecent
+        ? this.max
+        : this.start >= this.min && this.start <= this.max ? this.start : this.max;
     this.pendingFrame = false;
     this.$loading = $("#OWIDSliderLoading");
     this.urlsLoaded = 0;
