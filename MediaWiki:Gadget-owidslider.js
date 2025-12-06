@@ -222,14 +222,12 @@ var OWIDSlider = {
     // Initialize core runtime: build reverse maps, set messages and wire hook
     init: function () {
       // Build reverse Wikidata map if source map exists
+      // Note: Object.fromEntries not allowed to be used on Wikimedia
       if (OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP) {
-        OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.fromEntries(
-          Object.entries(OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP).map(function (
-            entry
-          ) {
-            return [entry[1], entry[0]];
-          })
-        );
+        OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.create(null);
+        for ( let index in Object.keys( OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP ) ) {
+          OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE[OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP[index]] = index;
+        }
       }
 
       // Delegate message selection to I18n module
@@ -240,7 +238,12 @@ var OWIDSlider = {
 
     // Small helper to parse current URL query string into an object
     parseQueryParams: function () {
-      return Object.fromEntries(new URLSearchParams(location.search));
+      // Not allowed to use Object.fromEntries()
+      let res = Object.create(null);
+      for ( const [key, value] of new URLSearchParams(location.search) ) {
+        res[key] = value;
+      }
+      return res;
     },
   }, // end Core
 
