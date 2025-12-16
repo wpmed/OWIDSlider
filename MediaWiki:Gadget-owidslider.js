@@ -1575,8 +1575,13 @@ OWIDSlider.Context.prototype = {
   		}
 
   		var titleEl = svgEl.find("#header > a text tspan");
-  		if (titleEl) {
-  			titleEl.text(titleEl.text().replace(this.min, this.currentImage));
+		if (titleEl) {
+			var titleText = '';
+			for ( i = 0; i < titleEl.length; i++ ) {
+				titleText += titleEl[i].textContent + ' ';
+			}
+			titleEl.slice(1).remove();
+			titleEl.text(titleText.replace(this.min, this.currentImage));
   		}
 
   		svgEl = this.getScaledSvg(svgEl);
