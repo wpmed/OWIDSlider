@@ -1657,7 +1657,6 @@ OWIDSlider.Context.prototype = {
     	parts[3] = "550";
     	svgEl.attr("viewBox", parts.join(" "));
     }
-    this.attachDetailsToInfoIcon(svgEl);
     return svgEl;
   },
   getInfoIcon: function () {
@@ -2176,6 +2175,7 @@ parseSVGDetails: function (svgDetails) {
     this.attacHoverEventOnCountries();
     this.attachFocusCountriesOnLegendHover();
     this.attachClickEventOnCountries();
+    this.attachDetailsToInfoIcon($(this.CONTAINER_SELECTOR + ' > svg'));
     // attachBackButton();
   },
 
