@@ -235,7 +235,7 @@ var OWIDSlider = {
       // Note: Object.fromEntries not allowed to be used on Wikimedia
       if (OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP) {
         OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE = Object.create(null);
-        for ( let index in Object.keys( OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP ) ) {
+        for ( let index in OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP ) {
           OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP_REVERSE[OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP[index]] = index;
         }
       }
