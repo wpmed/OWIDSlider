@@ -88,6 +88,16 @@ var OWIDSlider = {
         OWIDSliderPlayLabel: "Irudien sorta erakutsi",
         OWIDSliderLoading: "Kargatzen... $1%",
       },
+      fa: {
+        OWIDSliderFrameBack: "بازگشت به نقشه",
+        OWIDSliderFrameBackDesktop: "بازگشت به مقاله",
+        OWIDSliderFrameImageCredit: "منبع و حقوق رسانه‌ها",
+        OWIDSliderFrameCopyLink: "رونوشت پیوند مستقیم",
+        OWIDSliderSliderLabel: "انتخاب نگاره",
+        OWIDSliderSelectRegion: "انتخاب منطقه",
+        OWIDSliderPlayLabel: "نمایش اسلایدشو",
+        OWIDSliderLoading: "در حال بارگذاری... $1%",
+      },
       fr: {
         OWIDSliderFrameBack: "Retour",
         OWIDSliderFrameBackDesktop: "Retour à l'article",
@@ -196,16 +206,6 @@ var OWIDSlider = {
         OWIDSliderSelectRegion: "Chọn khu vực",
         OWIDSliderPlayLabel: "Hiển thị trình chiếu",
         OWIDSliderLoading: "Đang tải... $1%",
-      },
-      fa: {
-        OWIDSliderFrameBack: "بازگشت به نقشه",
-        OWIDSliderFrameBackDesktop: "بازگشت به مقاله",
-        OWIDSliderFrameImageCredit: "منبع و حقوق رسانه‌ها",
-        OWIDSliderFrameCopyLink: "رونوشت پیوند مستقیم",
-        OWIDSliderSliderLabel: "انتخاب نگاره",
-        OWIDSliderSelectRegion: "انتخاب منطقه",
-        OWIDSliderPlayLabel: "نمایش اسلایدشو",
-        OWIDSliderLoading: "در حال بارگذاری... $1%",
       },
     },
     // End translations
