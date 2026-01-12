@@ -16,3 +16,13 @@ This assumes you have a MediaWiki installation with the gadgets extension instal
 * Create pages MediaWiki:Gadget-owidslider.js and MediaWiki:Gadget-owidslider.css copied from this repo
 * Add `owidslider [ResourceLoader|default|categories=Pages using gadget owidslider]|owidslider.js|owidslider.css` to MediaWiki:Gadgets-definition
 * Copy Template:Owidslider, Module:Owidslider from mdwiki
+== Configuration Options ==
+
+The OWIDSlider supports the following configuration options:
+
+* `start` - The year to start displaying (default: most recent year)
+* `mostRecent` - When set to true, always displays the most recent year of data available (default: false)
+* `loop` - Whether to loop the animation (default: false)
+* `startingView` - The initial view to display (e.g., "World")
+
+To use the `mostRecent` option, add `"mostRecent": true` to the configuration JSON.
