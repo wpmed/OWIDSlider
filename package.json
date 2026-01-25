@@ -1,0 +1,20 @@
+{
+  "name": "owidslider",
+  "version": "1.0.0",
+  "description": "OWID Slider — Our World In Data SVG Image Stack Viewer for Wikimedia",
+  "main": "MediaWiki:Gadget-owidslider.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt": "^1.5.3",
+    "grunt-eslint": "^24.0.0",
+    "eslint-config-wikimedia": "^0.28.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wpmed/OWIDSlider.git"
+  },
+  "author": "Hellerhoff, Bawolff, Hassan M. Amin",
+  "license": "MIT"
+}

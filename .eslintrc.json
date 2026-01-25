@@ -1,0 +1,6 @@
+{
+  "extends": "wikimedia/client-es5",
+  "parserOptions": {
+    "ecmaVersion": 2020
+  }
+}
