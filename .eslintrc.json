@@ -2,5 +2,38 @@
   "extends": "wikimedia/client-es5",
   "parserOptions": {
     "ecmaVersion": 2020
+  },
+  "globals": {
+    "mw": "readonly",
+    "DOMPurify": "readonly",
+    "$": "readonly"
+  },
+  "rules": {
+    "no-mixed-spaces-and-tabs": "off",
+    "block-scoped-var": "off",
+    "es-x/no-block-scoped-variables": "off",
+    "eqeqeq": "off",
+    "no-restricted-properties": "off",
+    "max-len": "off",
+    "no-console": "off",
+    "no-unused-vars": "off",
+    "no-shadow": "off",
+    "no-implicit-globals": "off",
+    "no-undef": "off",
+    "no-redeclare": "off",
+    "camelcase": "off",
+    "no-tabs": "off",
+    "es-x/no-array-prototype-includes": "off",
+    "es-x/no-string-prototype-includes": "off",
+    "es-x/no-object-entries": "off",
+    "es-x/no-destructuring": "off",
+    "no-useless-concat": "off",
+    "new-cap": "off",
+    "jsdoc/require-param-type": "off",
+    "jsdoc/require-asterisk-prefix": "off",
+    "es-x/no-string-prototype-replaceall": "off",
+    "es-x/no-object-values": "off",
+    "es-x/no-object-assign": "off",
+    "es-x/no-for-of-loops": "off"
   }
 }

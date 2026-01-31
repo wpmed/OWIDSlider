@@ -20,6 +20,10 @@
  *   handlers and initialize the slider when the document is ready.
  */
 
+// Add ESLint globals comment at the top of the file
+// This tells ESLint these variables are intentionally global and expected to be available at runtime.
+/* global mw, DOMPurify, $ */
+
 var OWIDSlider = {
 	// ---------------------------------------------------------------------
 	// OWIDSlider.I18n
