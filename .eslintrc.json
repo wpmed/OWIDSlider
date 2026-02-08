@@ -9,10 +9,11 @@
     "$": "readonly"
   },
   "rules": {
-    "no-mixed-spaces-and-tabs": "off",
+    // "no-mixed-spaces-and-tabs": "off",
+    // "eqeqeq": "off",
+    "indent": "off",
     "block-scoped-var": "off",
     "es-x/no-block-scoped-variables": "off",
-    "eqeqeq": "off",
     "no-restricted-properties": "off",
     "max-len": "off",
     "no-console": "off",
