@@ -838,8 +838,7 @@ var OWIDSlider = {
 				.find( '.mw-file-element, .lazy-image-placeholder' )
 				.each( function ( i ) {
 					if (
-						viewerInfo[ i ] instanceof Object &&
-            typeof viewerInfo[ i ].list === 'string'
+						viewerInfo[ i ] instanceof Object && typeof viewerInfo[ i ].list === 'string'
 					) {
 						// We used to use unicode ▶, but was rendered inconsitently between browsers, so switch to svg.
 						var $play = $( '<button></button>' )
@@ -854,13 +853,11 @@ var OWIDSlider = {
 						$play.on( 'click', function ( e ) {
 							e.preventDefault();
 							if (
-								!queryParams.owid_list ||
-                queryParams.owid_list.toLowerCase() !=
-                  decodeURIComponent( data.list.toLowerCase() )
+								!queryParams.owid_list || queryParams.owid_list.toLowerCase() !== decodeURIComponent( data.list.toLowerCase() )
 							) {
-              	var newUrl = new URL( window.location.href );
+								var newUrl = new URL( window.location.href );
 								newUrl.searchParams.set( 'owid_list', encodeURIComponent( data.list ) );
-								if ( data.language && data.language != '' ) {
+								if ( data.language && data.language !== '' ) {
 									newUrl.searchParams.set( 'owid_language', encodeURIComponent( data.language ) );
 								}
 
@@ -877,17 +874,16 @@ var OWIDSlider = {
 							position: 'relative'
 						} );
 						$this.after( $play );
-						var listMatch = queryParams.owid_list && data.list &&
-              decodeURIComponent( queryParams.owid_list.toLowerCase() ) == decodeURIComponent( data.list.toLowerCase() );
+						var listMatch = queryParams.owid_list && data.list && decodeURIComponent( queryParams.owid_list.toLowerCase() ) === decodeURIComponent( data.list.toLowerCase() );
 						var langMatch = (
-                	// Handle language cases
-                	// 1. No language in uri and this doesnt have language
-                	( !data.language && !queryParams.owid_language ) ||
-                	// 2. Language in uri and this has language
-                	( data.language && queryParams.owid_language && data.language == decodeURIComponent( queryParams.owid_language.toLowerCase() ) )
+							// Handle language cases
+							// 1. No language in uri and this doesnt have language
+							( !data.language && !queryParams.owid_language ) ||
+							// 2. Language in uri and this has language
+						( data.language && queryParams.owid_language && data.language === decodeURIComponent( queryParams.owid_language.toLowerCase() ) )
 						);
 						if (
-            	listMatch && langMatch
+						listMatch && langMatch
 						) {
 							OWIDSlider.showFrame( data );
 						}
@@ -937,7 +933,7 @@ var OWIDSlider = {
 
 		var win = OO.ui.getWindowManager().openWindow( 'OWIDSlider', config );
 		win.closing.done( function () {
-    	var newUrl = new URL( window.location.href );
+		var newUrl = new URL( window.location.href );
 			newUrl.searchParams.delete( 'owid_list' );
 			newUrl.searchParams.delete( 'owid_language' );
 
@@ -966,42 +962,42 @@ var OWIDSlider = {
 		var url = '';
 		var page = mw.Title.newFromText( data.list );
 		if ( !page ) {
-	   console.log( 'Image stack error, invalid page ' + data.list );
-	   return;
+		console.log( 'Image stack error, invalid page ' + data.list );
+		return;
 		}
-		if ( data.location && data.location.toLowerCase() == 'commons' ) {
-    	var templateName = page.title;
+		if ( data.location && data.location.toLowerCase() === 'commons' ) {
+		// var templateName = page.title; /* eslint no-unused var*/
 
 			var api = new mw.Api( {
 				userAgent: 'OWIDSlider',
-		    ajax: {
-		        url: 'https://commons.wikimedia.org/w/api.php'
-		    }
+			ajax: {
+				url: 'https://commons.wikimedia.org/w/api.php'
+			}
 			} );
 			api.get( {
-		    action: 'parse',
-		    page: data.list,
-		    format: 'json',
-		    prop: 'text',
+			action: 'parse',
+			page: data.list,
+			format: 'json',
+			prop: 'text',
 				uselang: data.language,
-		    origin: '*' // This helps with CORS
+			origin: '*' // This helps with CORS
 			} ).then( function ( res ) {
-		    if ( res.parse ) {
-		        const text = res.parse.text[ '*' ];
+			if ( res.parse ) {
+				const text = res.parse.text[ '*' ];
 					return OWIDSlider.handlePage( $viewer, data, text );
-		    }
+		}
 			} ).catch( function ( error ) {
-		    console.error( 'Error:', error );
+			console.error( 'Error:', error );
 			} );
 		} else {
 			url = page.getUrl();
 			fetch( url )
-	      .then( function ( response ) {
-	        return response.text();
-	      } )
-	      .then( function ( text ) {
-	        return OWIDSlider.handlePage( $viewer, data, text );
-	      } );
+			.then( function ( response ) {
+			return response.text();
+			} )
+			.then( function ( text ) {
+			return OWIDSlider.handlePage( $viewer, data, text );
+			} );
 		}
 	},
 
@@ -1038,14 +1034,14 @@ var OWIDSlider = {
 			if ( !elm ) {
 				throw new Error( 'Could not find gallery with id ' + galleryId );
 			}
-			if ( galleryName == 'AllCountries' ) {
+			if ( galleryName === 'AllCountries' ) {
 				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderCountry );
 			} else {
 				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderYear );
 			}
 			if (
 				!( years[ galleryName ] instanceof Array ) ||
-        years[ galleryName ].length < 1
+		years[ galleryName ].length < 1
 			) {
 				throw new Error( 'Invalid data-owidslider-years ' + galleryId );
 			}
@@ -1053,7 +1049,7 @@ var OWIDSlider = {
 			var imgs = elm.querySelectorAll(
 				'img.mw-file-element, span[typeof~="mw:Error"][typeof~="mw:File"]'
 			);
-			if ( galleryName == 'AllCountries' ) {
+			if ( galleryName === 'AllCountries' ) {
 				for ( var j = 0; j < imgs.length; j++ ) {
 					if ( imgs[ j ].nodeName !== 'IMG' ) {
 						continue;
@@ -1062,15 +1058,14 @@ var OWIDSlider = {
 						imgs[ j ].getAttribute( 'src' )
 					);
 					if ( imgs[ j ].parentElement.href ) {
-        	countriesInfoUrls[ years[ galleryName ][ j ] ] = imgs[ j ].parentElement.href;
-    	  }
+			countriesInfoUrls[ years[ galleryName ][ j ] ] = imgs[ j ].parentElement.href;
+	}
 				}
 			} else {
 				imgMap[ galleryName ] = [];
 				for ( var i = 0; i < imgs.length; i++ ) {
 					if (
-						typeof years[ galleryName ][ i ] !== 'number' ||
-            imgs[ i ].nodeName !== 'IMG'
+						typeof years[ galleryName ][ i ] !== 'number' || imgs[ i ].nodeName !== 'IMG'
 					) {
 						continue;
 					}
@@ -1091,19 +1086,19 @@ var OWIDSlider = {
 			throw new Error( 'No images for slider' );
 		}
 		var urls = this.getImagesUrls( imgMap );
-		var context = new OWIDSlider.Context(
-			$viewer,
-			data,
-			imgMap,
-			urls,
-			countriesUrls,
-			countriesInfoUrls,
-			width,
-			height,
-			min,
-			max,
-			viewMin
-		);
+		// var context = new OWIDSlider.Context(
+		// 	$viewer,
+		// 	data,
+		// 	imgMap,
+		// 	urls,
+		// 	countriesUrls,
+		// 	countriesInfoUrls,
+		// 	width,
+		// 	height,
+		// 	min,
+		// 	max,
+		// 	viewMin
+		// );
 	},
 
 	getSource: function ( imgElm, width, height ) {
@@ -1126,10 +1121,7 @@ var OWIDSlider = {
 			if ( parts && parts.length === 3 ) {
 				var pixelRatio = parseFloat( parts[ 2 ] );
 				if (
-					( imgW < w && originalW * pixelRatio > imgW ) ||
-          ( imgW > w &&
-            originalW * pixelRatio - w >= 0 &&
-            originalW * pixelRatio < imgW )
+					( imgW < w && originalW * pixelRatio > imgW ) || ( imgW > w && originalW * pixelRatio - w >= 0 && originalW * pixelRatio < imgW )
 				) {
 					imgW = originalW * pixelRatio;
 					imgH = originalH * pixelRatio;
@@ -1254,8 +1246,7 @@ var OWIDSlider = {
 		// for (var i in imgs) {
 		//   this.total += Object.keys(imgs[i]).length;
 		// }
-		this.captionId =
-      typeof config.caption === 'string' ? config.caption : false;
+		this.captionId = typeof config.caption === 'string' ? config.caption : false;
 		// Future TODO - make the size of image adaptive to screen size
 		// Future TODO - handle images of different sizes and aspect ratios.
 		this.width = config.width;
@@ -1302,10 +1293,10 @@ OWIDSlider.Context.prototype = {
 		const SCROLL_SLOWDOWN = navigator.userAgent.includes( 'Chrome/' ) ? 5 : 2;
 		this.pendingScrollDelta = 0;
 
-		var containingWidth =
-      this.$viewer[ 0 ].parentElement.parentElement.parentElement.clientWidth;
-		var containingHeight =
-      this.$viewer[ 0 ].parentElement.parentElement.parentElement.clientHeight;
+		// 	var containingWidth =
+		//   this.$viewer[ 0 ].parentElement.parentElement.parentElement.clientWidth; /* eslint no-unused var*/
+		// 	var containingHeight =
+		//   this.$viewer[ 0 ].parentElement.parentElement.parentElement.clientHeight; /* eslint no-unused var*/
 		this.$viewer.empty();
 
 		this.$slider = $( '<input>', {
@@ -1378,10 +1369,10 @@ OWIDSlider.Context.prototype = {
 			that.scrollobject = true; // set flag
 			return false;
 		} );
-		$svgContainer.on( 'mouseup', function ( event ) {
-			that.scrollobject = false; // set flag
-			return false;
-		} );
+		// $svgContainer.on( 'mouseup', function ( event ) {
+		// 	that.scrollobject = false; // set flag
+		// 	return false;
+		// } ); /* eslint no-unused var*/
 		$svgContainer.on( 'mousemove', function ( event ) {
 			if ( that.scrollobject && Math.abs( mouse_y - event.screenY ) > 10 ) {
 				var offset = mouse_y < event.screenY ? 1 : -1;
@@ -1405,9 +1396,9 @@ OWIDSlider.Context.prototype = {
 				.attr( 'class', 'owid-select' );
 			for ( var i in this.imgs ) {
 				var optionName = i;
-				if ( optionName == 'NorthAmerica' ) {
+				if ( optionName === 'NorthAmerica' ) {
 					optionName = 'North America';
-				} else if ( optionName == 'SouthAmerica' ) {
+				} else if ( optionName === 'SouthAmerica' ) {
 					optionName = 'South America';
 				}
 				$select.append(
@@ -1461,7 +1452,7 @@ OWIDSlider.Context.prototype = {
 		this.getUrls();
 		// this.toggleImg();
 		this.preload();
-		if ( this.language && this.language != 'en' ) {
+		if ( this.language && this.language !== 'en' ) {
 			this.populateTranslatedCountriesNames();
 		}
 		this.$slider.focus();
@@ -1502,7 +1493,7 @@ OWIDSlider.Context.prototype = {
 			// If we get to the end and its still not valid
 			while (
 				this.currentImage > this.min &&
-        !this.imgs[ this.currentView ][ this.currentImage ]
+					!this.imgs[ this.currentView ][ this.currentImage ]
 			) {
 				this.currentImage--;
 			}
@@ -1515,7 +1506,7 @@ OWIDSlider.Context.prototype = {
 			}
 			while (
 				this.currentImage < this.max &&
-        !this.imgs[ this.currentView ][ this.currentImage ]
+					!this.imgs[ this.currentView ][ this.currentImage ]
 			) {
 				this.currentImage++;
 			}
@@ -1580,23 +1571,24 @@ OWIDSlider.Context.prototype = {
 		this.$svgContainer.html( $svgEl );
 	},
 	setCurrentSvgImage: function ( svgUrl, callback ) {
-  	// Check for the new flow
-  	if ( this.svgYears && this.svgYears[ this.currentView ] && this.svgYears[ this.currentView ][ this.currentImage ] && this.firstSVGData ) {
-  		var svgEl = $( this.firstSVGData );
-  		var countriesWithData = svgEl.find( '#countries-with-data path,#countries-without-data path' );
-  		for ( var i = 0; i < countriesWithData.length; i++ ) {
-  			var fill = this.svgYears[ this.currentView ][ this.currentImage ][ countriesWithData[ i ].getAttribute( 'id' ) ];
-  			if ( fill ) {
-  				countriesWithData[ i ].setAttribute( 'fill', fill );
-  			}
-  		}
+	// Check for the new flow
+	let i, svgEl; // Declare outside the loop
+	if ( this.svgYears && this.svgYears[ this.currentView ] && this.svgYears[ this.currentView ][ this.currentImage ] && this.firstSVGData ) {
+		svgEl = $( this.firstSVGData );
+		var countriesWithData = svgEl.find( '#countries-with-data path,#countries-without-data path' );
+		for ( i = 0; i < countriesWithData.length; i++ ) {
+			var fill = this.svgYears[ this.currentView ][ this.currentImage ][ countriesWithData[ i ].getAttribute( 'id' ) ];
+			if ( fill ) {
+				countriesWithData[ i ].setAttribute( 'fill', fill );
+			}
+		}
 
-  		var urlEl = svgEl.find( '#header > a' );
-  		if ( urlEl.length && urlEl.attr( 'href' ) ) {
-  			urlEl.attr( 'href', urlEl.attr( 'href' ).replace( this.min, this.currentImage ) );
-  		}
+		var urlEl = svgEl.find( '#header > a' );
+		if ( urlEl.length && urlEl.attr( 'href' ) ) {
+			urlEl.attr( 'href', urlEl.attr( 'href' ).replace( this.min, this.currentImage ) );
+		}
 
-  		var titleEl = svgEl.find( '#header > a text tspan' );
+		var titleEl = svgEl.find( '#header > a text tspan' );
 			if ( titleEl ) {
 				var titleText = '';
 				for ( i = 0; i < titleEl.length; i++ ) {
@@ -1604,18 +1596,18 @@ OWIDSlider.Context.prototype = {
 				}
 				titleEl.slice( 1 ).remove();
 				titleEl.text( titleText.replace( this.min, this.currentImage ) );
-  		}
+		}
 
-  		svgEl = this.getScaledSvg( svgEl );
+		svgEl = this.getScaledSvg( svgEl );
 			this.setSvg( svgEl );
-  		this.attachSVGHandlers();
-    	callback();
-  		return;
-  	}
+		this.attachSVGHandlers();
+		callback();
+		return;
+		}
 
 		if ( this.cachedSvgs[ svgUrl ] ) {
-			var svgEl = this.getScaledSvg( this.cachedSvgs[ svgUrl ] );
-	  this.setSvg( svgEl );
+			svgEl = this.getScaledSvg( this.cachedSvgs[ svgUrl ] );
+		this.setSvg( svgEl );
 			this.attachSVGHandlers();
 			callback();
 			return;
@@ -1643,18 +1635,18 @@ OWIDSlider.Context.prototype = {
 		// If the svg content has comment, it's treated as a separate node
 		// So we need to extract just the svg
 		if ( svgEl.length > 1 ) {
-    	for ( var i = 0; i < svgEl.length; i++ ) {
-    		if ( svgEl[ i ].tagName == 'svg' ) {
-    			svgEl = $( svgEl[ i ] );
-    			break;
-    		}
-    	}
+		for ( var i = 0; i < svgEl.length; i++ ) {
+		if ( svgEl[ i ].tagName === 'svg' ) {
+		svgEl = $( svgEl[ i ] );
+		break;
+		}
+		}
 		}
 
 		svgEl.removeAttr( 'width' );
 		svgEl.removeAttr( 'height' );
 		var windowWidth = window.outerWidth;
-		var isMobile = windowWidth < 600;
+		// var isMobile = windowWidth < 600; /* eslint no-unused var*/
 		// if (isMobile) {
 		// 	svgEl.attr("width", "100%");
 		// } else {
@@ -1664,10 +1656,10 @@ OWIDSlider.Context.prototype = {
 		// Update the viewBox
 		var viewBox = svgEl.attr( 'viewBox' );
 		if ( viewBox ) {
-    	var parts = viewBox.trim().split( ' ' );
+		var parts = viewBox.trim().split( ' ' );
 			// FIXME, is this just hardcoding the normal size of the OWID files? That seems very fragile.
-    	parts[ 3 ] = '550';
-    	svgEl.attr( 'viewBox', parts.join( ' ' ) );
+		parts[ 3 ] = '550';
+		svgEl.attr( 'viewBox', parts.join( ' ' ) );
 		}
 		return svgEl;
 	},
@@ -1677,8 +1669,8 @@ OWIDSlider.Context.prototype = {
 			'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 62 62" width="25" height="25" version="1.0"><defs><linearGradient id="fieldGradient" gradientUnits="userSpaceOnUse" x1="42.9863" y1="7.01270" x2="22.0144" y2="51.9871"><stop offset="0.0" stop-color="#BCD6FE" /><stop offset="1.0" stop-color="#6787D3" /></linearGradient><linearGradient id="edgeGradient" gradientUnits="userSpaceOnUse" x1="55.4541" y1="42.7529" x2="9.54710" y2="16.2485"><stop offset="0.0" stop-color="#3057A7" /><stop offset="1.0" stop-color="#5A7AC6" /></linearGradient><radialGradient id="shadowGradient"><stop offset="0.0" stop-color="#C0C0C0" /><stop offset="0.88" stop-color="#C0C0C0" /><stop offset="1.0" stop-color="#C0C0C0" stop-opacity="0.0" /></radialGradient></defs><circle id="shadow" r="26.5" cy="29.5" cx="32.5" fill="url(#shadowGradient)" transform="matrix(1.0648,0.0,0.0,1.064822,-2.1,1.0864)" /><circle id="field" r="25.8" cx="31" cy="31" fill="url(#fieldGradient)" stroke="url(#edgeGradient)" stroke-width="2" /><g id="info" fill="white"><polygon points="23,25 35,25 35,44 39,44 39,48 23,48 23,44 27,44 27,28 23,28 23,25" /><circle r="4" cx="31" cy="17" /></g></svg>'
 		);
 		if ( window.outerWidth < 600 ) {
-    	$icon.attr( 'width', '50px' );
-    	$icon.attr( 'height', '50px' );
+		$icon.attr( 'width', '50px' );
+		$icon.attr( 'height', '50px' );
 		}
 		return $icon;
 	},
@@ -1694,11 +1686,11 @@ OWIDSlider.Context.prototype = {
 			details.remove();
 		}
 		if ( footer.length ) {
-    	footer.remove();
+		footer.remove();
 		}
 		var detailsArr = [];
 		if ( this.worldDetails ) {
-    	detailsArr = this.parseSVGDetails( $( this.worldDetails ) );
+		detailsArr = this.parseSVGDetails( $( this.worldDetails ) );
 		} else {
 			detailsArr = this.parseSVGDetails( details );
 		}
@@ -1706,7 +1698,7 @@ OWIDSlider.Context.prototype = {
 		var isMobile = window.outerWidth < 600;
 		if ( header.length && detailsArr ) {
 			header = header.first();
-			var that = this;
+			// var that = this; /* eslint no-unused var*/
 			var infoIcon = this.getInfoIcon();
 			svgEl.find( '#logo' ).empty().append( infoIcon );
 			infoIcon.css( 'cursor', 'pointer' );
@@ -1738,15 +1730,15 @@ OWIDSlider.Context.prototype = {
 					.attr( 'class', e.type === 'mouseenter' ? 'owid-details-hover' : 'owid-details-click' );
 				if ( e.type === 'click' ) {
 					var close = $( '<button>' ).text( 'X' ).css( 'cursor', 'pointer' ).on( 'click', function () {
-       		  $( '#details-popup' ).remove();
-       	  } );
-       	  var closeContainer = $( '<div>' ).css( 'text-align', 'right' ).append( close );
-       	  popup.append( closeContainer );
+			$( '#details-popup' ).remove();
+		} );
+			var closeContainer = $( '<div>' ).css( 'text-align', 'right' ).append( close );
+			popup.append( closeContainer );
 				}
 				if ( isMobile ) {
-        	popup.css( 'top', '0px' ).css( 'right', '25px' ).css( 'max-width', '350px' );
+			popup.css( 'top', '0px' ).css( 'right', '25px' ).css( 'max-width', '350px' );
 				} else {
-        	popup.css( 'top', parseInt( e.clientY ) + 15 + 'px' ).css( 'left', parseInt( e.clientX ) - 400 + 'px' );
+			popup.css( 'top', parseInt( e.clientY ) + 15 + 'px' ).css( 'left', parseInt( e.clientX ) - 400 + 'px' );
 				}
 				detailsArr.forEach( function ( item ) {
 					var itemContainer = $( '<div>' ).css( 'font-size', '12px' );
@@ -1829,38 +1821,38 @@ OWIDSlider.Context.prototype = {
 	},
 	replaceTranslationData: function ( svgDoc ) {
 		if ( this.worldTitle ) {
-    	var currentTitle = svgDoc.querySelector( '#header a text tspan' );
-    	if ( currentTitle ) {
-    		currentTitle.textContent = this.worldTitle;
-    	}
+		var currentTitle = svgDoc.querySelector( '#header a text tspan' );
+		if ( currentTitle ) {
+			currentTitle.textContent = this.worldTitle;
+		}
 		}
 		if ( this.worldSubtitle ) {
-    	var currentSubtitle = svgDoc.querySelector( '#header #subtitle text tspan' );
-    	if ( currentSubtitle ) {
-    		currentSubtitle.textContent = this.worldSubtitle;
-    	}
+		var currentSubtitle = svgDoc.querySelector( '#header #subtitle text tspan' );
+		if ( currentSubtitle ) {
+			currentSubtitle.textContent = this.worldSubtitle;
+		}
 		}
 
 		if ( this.worldDetails ) {
-    	var currentDetails = svgDoc.querySelector( '#details' );
-    	if ( currentDetails ) {
-    		currentDetails.replaceWith( this.worldDetails );
-    	}
+			var currentDetails = svgDoc.querySelector( '#details' );
+		if ( currentDetails ) {
+			currentDetails.replaceWith( this.worldDetails );
+		}
 		}
 		if ( this.worldLabels ) {
-    	var currentLabels = svgDoc.querySelector( '#labels' );
-    	if ( currentLabels ) {
-    		currentLabels.replaceWith( this.worldLabels );
-    	}
+		var currentLabels = svgDoc.querySelector( '#labels' );
+		if ( currentLabels ) {
+			currentLabels.replaceWith( this.worldLabels );
+		}
 		}
 
 		return svgDoc;
 	},
 	preload: function () {
 		var that = this;
-		var funcArray = [];
+		// var funcArray = []; /* eslint no-unused var*/
 		if ( !this.svgYears ) {
-    	this.svgYears = Object.create( null );
+		this.svgYears = Object.create( null );
 		}
 
 		var svgs = [];
@@ -1868,95 +1860,95 @@ OWIDSlider.Context.prototype = {
 		var firstSvg = viewSvgs[ this.min ];
 		fetch( firstSvg.url )
 			.then( function ( res ) {
-    	return res.text();
+		return res.text();
 			} )
 			.then( function ( svgData ) {
-    	// We need to extract the years first, cause DOMPurify removes the years metadata
-    	var parser = new DOMParser();
-    	var svgDoc = parser.parseFromString( svgData, 'image/svg+xml' );
-    	var years = svgDoc.querySelectorAll( 'metadata years year' );
+		// We need to extract the years first, cause DOMPurify removes the years metadata
+		var parser = new DOMParser();
+		var svgDoc = parser.parseFromString( svgData, 'image/svg+xml' );
+		var years = svgDoc.querySelectorAll( 'metadata years year' );
 
 				// Then let's purify
 				svgData = OWIDSlider.purify( svgData );
 				svgData = svgData.replaceAll( '&nbsp;', '' );
 
 				parser = new DOMParser();
-    	svgDoc = parser.parseFromString( svgData, 'image/svg+xml' );
-    	if ( years.length > 0 ) {
-    		var yearsObj = Object.create( null );
-    		years.forEach( function ( yearEl ) {
-    			var year = parseInt( yearEl.getAttribute( 'value' ) );
-    			yearsObj[ year ] = Object.create( null );
-    			for ( var i = 0; i < yearEl.children.length; i++ ) {
-    				var countryEl = yearEl.children[ i ];
-    				yearsObj[ year ][ countryEl.getAttribute( 'name' ).replace( /\s/g, '-' ) ] = countryEl.getAttribute( 'fill' );
-    			}
-    		} );
-    		that.firstSVGData = svgData;
+		svgDoc = parser.parseFromString( svgData, 'image/svg+xml' );
+		if ( years.length > 0 ) {
+			var yearsObj = Object.create( null );
+			years.forEach( function ( yearEl ) {
+				var year = parseInt( yearEl.getAttribute( 'value' ) );
+			yearsObj[ year ] = Object.create( null );
+			for ( var i = 0; i < yearEl.children.length; i++ ) {
+			var countryEl = yearEl.children[ i ];
+				yearsObj[ year ][ countryEl.getAttribute( 'name' ).replace( /\s/g, '-' ) ] = countryEl.getAttribute( 'fill' );
+			}
+			} );
+		that.firstSVGData = svgData;
 
-    		// Remove language switches
-    		var switches = svgDoc.querySelectorAll( 'switch' );
-    		switches.forEach( function ( sw ) {
-    			var enOption = null;
-    			sw.querySelectorAll( 'text' ).forEach( function ( text ) {
-    				var sysLang = text.getAttribute( 'systemLanguage' );
-    				if ( !sysLang || sysLang == 'en' ) {
-    					enOption = text;
-    				}
-    				if ( that.language && that.language != 'en' ) {
-    					if ( sysLang != that.language ) {
-    						sw.removeChild( text );
-    					} else {
-    						text.removeAttribute( 'systemLanguage' );
-    					}
-    				} else {
-    					// It's English
-    					if ( sysLang && sysLang != 'en' ) {
-    						sw.removeChild( text );
-    					}
-    				}
-   				} );
-   				// Fallback to English if no translation to target language is found
-   				if ( sw.children.length == 0 && enOption ) {
-   					sw.appendChild( enOption );
-   				}
-   			} );
+		// Remove language switches
+		var switches = svgDoc.querySelectorAll( 'switch' );
+				switches.forEach( function ( sw ) {
+					var enOption = null;
+					sw.querySelectorAll( 'text' ).forEach( function ( text ) {
+						var sysLang = text.getAttribute( 'systemLanguage' );
+						if ( !sysLang || sysLang === 'en' ) {
+							enOption = text;
+						}
+					if ( that.language && that.language !== 'en' ) {
+						if ( sysLang !== that.language ) {
+							sw.removeChild( text );
+						} else {
+							text.removeAttribute( 'systemLanguage' );
+						}
+					} else {
+						// It's English
+						if ( sysLang && sysLang !== 'en' ) {
+							sw.removeChild( text );
+					}
+					}
+				} );
+				// Fallback to English if no translation to target language is found
+				if ( sw.children.length === 0 && enOption ) {
+					sw.appendChild( enOption );
+				}
+				} );
 
-   			// preserve the translations from the World map
-    		if ( that.currentView.toLowerCase() == 'world' || ( switches.length > 0 && !that.worldTitle ) ) {
+			// preserve the translations from the World map
+			if ( that.currentView.toLowerCase() === 'world' || ( switches.length > 0 && !that.worldTitle ) ) {
 						that.worldTitle = svgDoc.querySelector( '#header a text tspan' ) ? svgDoc.querySelector( '#header a text tspan' ).textContent : '';
 						that.worldSubtitle = svgDoc.querySelector( '#header #subtitle text tspan' ) ? svgDoc.querySelector( '#header #subtitle text tspan' ).textContent : '';
-     			that.worldDetails = svgDoc.querySelector( '#details' );
-    			that.worldLabels = svgDoc.querySelector( '#labels' );
-    		} else {
-    			// Check if we have world translations. If so, substitute in the svgDoc
-    			svgDoc = that.replaceTranslationData( svgDoc );
-    		}
+				that.worldDetails = svgDoc.querySelector( '#details' );
+				that.worldLabels = svgDoc.querySelector( '#labels' );
+			} else {
+				// Check if we have world translations. If so, substitute in the svgDoc
+				svgDoc = that.replaceTranslationData( svgDoc );
+			}
 
-    		// Convert the modified DOM back to a string
-    		var serializer = new XMLSerializer();
-    		that.firstSVGData = serializer.serializeToString( svgDoc );
-    		that.svgYears[ that.currentView ] = yearsObj;
-    		that.toggleImg();
-    		that.removeLoadingState();
-    	} else {
-    		// TODO: Ask user to import or fallback to prev flow
-    		for ( var i = that.min; i <= that.max; i++ ) {
-		      var svgUrl = that.svgUrls[ that.currentView ][ i ];
-		      if ( svgUrl ) {
-		        svgUrl = svgUrl.url;
-		      } else {
-		        continue;
-		      }
-		      // Previousely cached
-		      if ( that.cachedSvgs[ svgUrl ] ) {
-		        continue;
-		      }
-		      svgs.push( svgUrl );
-	    	}
+			// Convert the modified DOM back to a string
+			var serializer = new XMLSerializer();
+			that.firstSVGData = serializer.serializeToString( svgDoc );
+			that.svgYears[ that.currentView ] = yearsObj;
+			that.toggleImg();
+			that.removeLoadingState();
+	} else {
+			// TODO: Ask user to import or fallback to prev flow
+			for ( var i = that.min; i <= that.max; i++ ) {
+			var svgUrl = that.svgUrls[ that.currentView ][ i ];
+			if ( svgUrl ) {
+				svgUrl = svgUrl.url;
+			} else {
+				continue;
+			}
+				// Previousely cached
+			if ( that.cachedSvgs[ svgUrl ] ) {
+				continue;
+				}
+			svgs.push( svgUrl );
+			}
 					that.processArray( svgs, that.loadAndCacheSvgs.bind( that ) );
 					that.toggleImg();
-    	}
+			}
 			} );
 
 	},
@@ -2001,7 +1993,7 @@ OWIDSlider.Context.prototype = {
 		return chunks.reduce( function ( p, v ) {
 			return p.then( function ( a ) {
 				return new Promise( function ( resolve ) {
-					if ( !v || v.length == 0 ) {
+					if ( !v || v.length === 0 ) {
 						return resolve( p );
 					}
 					var funcArray = [];
@@ -2060,8 +2052,8 @@ OWIDSlider.Context.prototype = {
 	},
 
 	removeLoadingState: function () {
-  	this.urlsLoaded = this.total;
-  	this.$viewer.removeClass( 'OWIDSlider-loading' );
+		this.urlsLoaded = this.total;
+		this.$viewer.removeClass( 'OWIDSlider-loading' );
 		this.$loading.remove();
 	},
 
@@ -2098,16 +2090,16 @@ OWIDSlider.Context.prototype = {
 				// reset calculation so we move image if they move 15 more pixels
 				this.pendingTouches[ t.identifier ] = [ t.clientX, t.clientY ];
 				/* Do not do anything for vertical swipes.
-              if ( startY - t.clientY > 0 ) {
-                // swipe up
-                this.currentImage--;
-                this.repaint();
-              } else {
-                // swipe down.
-                this.currentImage++;
-                this.repaint();
-              }
-              */
+				if ( startY - t.clientY > 0 ) {
+				// swipe up
+				this.currentImage--;
+				this.repaint();
+				} else {
+				// swipe down.
+				this.currentImage++;
+				this.repaint();
+				}
+			*/
 			}
 		}
 	},
@@ -2153,10 +2145,10 @@ OWIDSlider.Context.prototype = {
 			 * this.repaint();
 			 * } else {
 			 * // swipe down
-                this.currentImage++;
-                this.repaint();
-              }
-            }
+				this.currentImage++;
+				this.repaint();
+				}
+			}
 			 */
 
 			delete this.pendingTouches[ t.identifier ];
@@ -2208,7 +2200,7 @@ OWIDSlider.Context.prototype = {
 		// attach hover event on all countries
 		var allCountries = document.querySelectorAll(
 			this.CONTAINER_SELECTOR +
-        ' g#countries-with-data path,g#countries-without-data path'
+		' g#countries-with-data path,g#countries-without-data path'
 		);
 
 		for ( var i = 0; i < allCountries.length; i++ ) {
@@ -2233,8 +2225,8 @@ OWIDSlider.Context.prototype = {
 			countryPopup.style.boxShadow = '2px 2px 2px 1px #888888';
 			countryPopup.style.padding = '5px';
 			var span = document.createElement( 'span' );
-	  span.textContent = config.name;
-	  countryPopup.appendChild( span );
+			span.textContent = config.name;
+			countryPopup.appendChild( span );
 			countryPopup.id = config.id;
 			return countryPopup;
 		}
@@ -2275,9 +2267,9 @@ OWIDSlider.Context.prototype = {
 			var elementsSelector = this.CONTAINER_SELECTOR + ' ' + this.MAP_SELECTOR + " path[fill]:not([fill='" + fill + "'])";
 			var elements = document.querySelectorAll( elementsSelector );
 			for ( var i = 0; i < elements.length; i++ ) {
-      	if ( elements[ i ].parentElement && elements[ i ].parentElement.id == 'swatches' ) {
-      		continue;
-      	}
+		if ( elements[ i ].parentElement && elements[ i ].parentElement.id === 'swatches' ) {
+		continue;
+		}
 				elements[ i ].setAttribute( 'fill-opacity', '0.1' );
 			}
 			var targetElements = document.querySelectorAll(
@@ -2336,20 +2328,20 @@ OWIDSlider.Context.prototype = {
 
 	attachClickEventOnCountries: function () {
 		document.querySelector( this.CONTAINER_SELECTOR + ' ' + this.MAP_SELECTOR ).onclick =
-      function ( e ) {
-      	var target = e.target;
-      	if ( target.tagName != 'path' || !target.getAttribute( 'id' ) ) {
-      		return;
-      	}
-      	e.preventDefault();
-      	e.stopPropagation();
-      	var clickedId = target.getAttribute( 'id' );
-      	var clickedCountryCode = OWIDSlider.OWID_COUNTRY_CODES[ clickedId ];
-      	if ( clickedCountryCode ) {
-      		this.onCountryHoverLeave( e );
-      		this.loadCountryChart( clickedCountryCode );
-      	}
-      }.bind( this );
+		function ( e ) {
+		var target = e.target;
+		if ( target.tagName !== 'path' || !target.getAttribute( 'id' ) ) {
+			return;
+		}
+		e.preventDefault();
+		e.stopPropagation();
+		var clickedId = target.getAttribute( 'id' );
+		var clickedCountryCode = OWIDSlider.OWID_COUNTRY_CODES[ clickedId ];
+		if ( clickedCountryCode ) {
+			this.onCountryHoverLeave( e );
+			this.loadCountryChart( clickedCountryCode );
+		}
+		}.bind( this );
 	},
 
 	loadCountryChart: function ( countryCode ) {
@@ -2371,7 +2363,7 @@ OWIDSlider.Context.prototype = {
 						that.cachedCountriesSvgs[ url ] = content;
 						that.setSvg( that.originalContainerContent );
 						that.paintCountryChart( content );
-        	that.$credit[ 0 ].href = that.countriesInfoUrls[ countryCode ];
+			that.$credit[ 0 ].href = that.countriesInfoUrls[ countryCode ];
 					} )
 					.catch( function ( err ) {
 						console.log( 'Error getting country svg', err );
@@ -2409,8 +2401,7 @@ OWIDSlider.Context.prototype = {
 				return setTimeout( resolve, delay );
 			} ).then( function () {
 				const ids = chunk.join( '|' );
-				const url = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + ids + '&format=json&props=labels&languages=' + that.language;
-
+				// const url = 'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + ids + '&format=json&props=labels&languages=' + that.language; /* eslint no-unused var */
 				var api = new mw.Api( {
 					userAgent: 'OWIDSlider',
 					ajax: {
@@ -2464,41 +2455,41 @@ OWIDSlider.Context.prototype = {
 		} );
 	},
 	getTranslatedCountryName: function ( language, name ) {
-  	var that = this;
-  	return new Promise( function ( resolve, reject ) {
-	  	if ( !language || !name ) {
-	  		return reject( 'Missing language or name' );
-	  	}
-	  	name = name.toLowerCase().replace( /[^a-z0-9]/g, '' );
-	  	if ( !OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP[ name ] ) {
-	  		return reject( 'Cannot find country name in WIKIDATA ID Map: ' + name );
-	  	}
-	  	if ( that.translatedCountryNames[ name ] ) {
-	  		return resolve( that.translatedCountryNames[ name ] );
-	  	}
+	var that = this;
+	return new Promise( function ( resolve, reject ) {
+		if ( !language || !name ) {
+			return reject( 'Missing language or name' );
+		}
+		name = name.toLowerCase().replace( /[^a-z0-9]/g, '' );
+		if ( !OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP[ name ] ) {
+			return reject( 'Cannot find country name in WIKIDATA ID Map: ' + name );
+		}
+		if ( that.translatedCountryNames[ name ] ) {
+			return resolve( that.translatedCountryNames[ name ] );
+		}
 
-	  	var countryCode = OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP[ name ];
-	  	var url = 'https://www.wikidata.org/w/rest.php/wikibase/v1/entities/items/' + countryCode + '/labels';
-	  	fetch( url, {
-	  		headers: {
-	    		accept: 'application/json'
+		var countryCode = OWIDSlider.OWID_WIKIDATA_COUNTRY_MAP[ name ];
+		var url = 'https://www.wikidata.org/w/rest.php/wikibase/v1/entities/items/' + countryCode + '/labels';
+		fetch( url, {
+			headers: {
+				accept: 'application/json'
 				}
-	  	} )
-	      .then( function ( response ) {
-	        return response.json();
-	      } )
-	      .then( function ( map ) {
-	      	if ( map && map[ language ] ) {
-	      		that.translatedCountryNames[ name ] = map[ language ];
-	      		return resolve( map[ language ] );
-	      	}
-	      	return resolve( '' );
-	      } )
-	      .catch( function ( err ) {
-	      	console.log( 'Error getting translated country', err );
-	      	reject( err );
-	      } );
-  	} );
+		} )
+			.then( function ( response ) {
+			return response.json();
+			} )
+			.then( function ( map ) {
+			if ( map && map[ language ] ) {
+				that.translatedCountryNames[ name ] = map[ language ];
+				return resolve( map[ language ] );
+			}
+				return resolve( '' );
+			} )
+			.catch( function ( err ) {
+			console.log( 'Error getting translated country', err );
+			reject( err );
+			} );
+		} );
 	},
 	paintCountryChart: function ( content ) {
 		this.originalContainerContent = this.$svgContainer.html();
@@ -2511,50 +2502,50 @@ OWIDSlider.Context.prototype = {
 			// Delete all but the first one
 				headerSpan.slice( 1 ).remove();
 				// Remove the trailing ", $YEAR" from the title if found
-    		if ( this.worldTitle ) {
-	    		var titleParts = this.worldTitle.split( ',' );
-	    		if ( titleParts.length > 1 ) {
-	    			titleParts.pop();
-	    		}
-	    		headerSpan.text( titleParts.join( ',' ) );
-    		}
+		if ( this.worldTitle ) {
+			var titleParts = this.worldTitle.split( ',' );
+			if ( titleParts.length > 1 ) {
+				titleParts.pop();
+				}
+		headerSpan.text( titleParts.join( ',' ) );
 			}
+		}
 
 			if ( this.worldSubtitle ) {
-    		var subtitleSpan = scaledContent.find( '#subtitle text tspan' );
+		var subtitleSpan = scaledContent.find( '#subtitle text tspan' );
 				subtitleSpan.slice( 1 ).remove();
-    		if ( subtitleSpan.length > 0 ) {
-    			subtitleSpan.text( this.worldSubtitle );
-    		}
+			if ( subtitleSpan.length > 0 ) {
+			subtitleSpan.text( this.worldSubtitle );
+		}
 			}
 			if ( this.worldDetails ) {
-	    	var currentDetails = scaledContent.find( '#details' );
-	    	if ( currentDetails.length > 0 ) {
-	    		currentDetails[ 0 ].replaceWith( this.worldDetails );
-	    	}
-	    }
+			var currentDetails = scaledContent.find( '#details' );
+			if ( currentDetails.length > 0 ) {
+				currentDetails[ 0 ].replaceWith( this.worldDetails );
+			}
+		}
 
-	    // Handle translation
-	    if ( this.language && this.language != 'en' ) {
-	    	var countryLabel = scaledContent.find( '#text-labels text tspan' );
-	    	var that = this;
-	    	if ( countryLabel.length > 0 ) {
-	    		var countryName = countryLabel[ 0 ].textContent;
-	    		this.getTranslatedCountryName( this.language, countryName )
-	    		.then( function ( translatedName ) {
-	    			if ( translatedName ) {
-	    				countryLabel[ 0 ].textContent = translatedName;
-	    			}
+		// Handle translation
+		if ( this.language && this.language !== 'en' ) {
+			var countryLabel = scaledContent.find( '#text-labels text tspan' );
+			var that = this;
+			if ( countryLabel.length > 0 ) {
+				var countryName = countryLabel[ 0 ].textContent;
+				this.getTranslatedCountryName( this.language, countryName )
+				.then( function ( translatedName ) {
+				if ( translatedName ) {
+					countryLabel[ 0 ].textContent = translatedName;
+				}
 
-	    			that.applyCountryChartPaint( content, scaledContent );
-	    		} )
-	    		.catch( function ( err ) {
-	    			console.log( 'Error getting translated country name: ', err );
-	    			that.applyCountryChartPaint( content, scaledContent );
-	    		} );
-	    		return;
-	    	}
-	    }
+				that.applyCountryChartPaint( content, scaledContent );
+				} )
+				.catch( function ( err ) {
+					console.log( 'Error getting translated country name: ', err );
+				that.applyCountryChartPaint( content, scaledContent );
+						} );
+					return;
+			}
+			}
 		}
 		this.applyCountryChartPaint( content, scaledContent );
 	},
@@ -2582,7 +2573,7 @@ OWIDSlider.Context.prototype = {
 		$back.on(
 			'click',
 			function () {
-    	this.$svgContainer.html( '' ).append( this.originalContainerContent );
+				this.$svgContainer.html( '' ).append( this.originalContainerContent );
 				this.$credit[ 0 ].href = this.infoUrls[ this.currentView ][ this.currentImage ];
 				$backContainer.remove();
 				setTimeout(
@@ -2623,8 +2614,8 @@ OWIDSlider.Context.prototype = {
 	var toFix = [ 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll' ],
 		toBind =
       'onwheel' in document || document.documentMode >= 9 ?
-      	[ 'wheel' ] :
-      	[ 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll' ],
+							[ 'wheel' ] :
+							[ 'mousewheel', 'DomMouseScroll', 'MozMousePixelScroll' ],
 		slice = Array.prototype.slice,
 		nullLowestDeltaTimeout,
 		lowestDelta;
