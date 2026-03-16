@@ -1712,6 +1712,16 @@ OWIDSlider.Context.prototype = {
 		}
 		}
 
+		if (
+			!svgEl.attr( 'viewBox' ) &&
+			svgEl.attr( 'width' ) &&
+			svgEl.attr( 'width' ).match( /^\d+(px)?$/ ) &&
+			svgEl.attr( 'height' ) &&
+			svgEl.attr( 'height' ).match( /^\d+(px)?$/ )
+		) {
+			// If no viewbox but have width & height, make one so that we can properly resize image
+			svgEl.attr( 'viewBox', '0 0 ' + parseInt( svgEl.attr( 'width' ) ) + ' ' + parseInt( svgEl.attr( 'height' ) ) )
+		}
 		svgEl.removeAttr( 'width' );
 		svgEl.removeAttr( 'height' );
 		var windowWidth = window.outerWidth;
@@ -1724,7 +1734,7 @@ OWIDSlider.Context.prototype = {
 		svgEl.css( 'max-width', '100%' ).css( 'max-height', '70vh' );
 		// Update the viewBox
 		var viewBox = svgEl.attr( 'viewBox' );
-		if ( viewBox ) {
+		if ( viewBox && viewBox.match( /^0 0 850 / ) ) {
 		var parts = viewBox.trim().split( ' ' );
 			// FIXME, is this just hardcoding the normal size of the OWID files? That seems very fragile.
 		parts[ 3 ] = '550';
