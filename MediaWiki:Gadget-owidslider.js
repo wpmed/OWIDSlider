@@ -70,6 +70,7 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Select image',
 				OWIDSliderSelectRegion: 'Select region',
 				OWIDSliderPlayLabel: 'Show slideshow',
+				OWIDSliderShowRegionGraph: "Graph",
 				OWIDSliderLoading: 'Loading... $1%'
 			},
 			es: {
@@ -162,6 +163,26 @@ var OWIDSlider = {
 				OWIDSliderPlayLabel: '슬라이드쇼 보기',
 				OWIDSliderLoading: '불러오는 중... $1%'
 			},
+           sv: {
+                OWIDSliderFrameBack: 'Gå tillbaka till kartan',
+                OWIDSliderFrameBackDesktop: 'Gå tillbaka till artikeln',
+                OWIDSliderFrameImageCredit: 'Mediaattribuering',
+                OWIDSliderFrameCopyLink: 'Kopiera direktlänk',
+                OWIDSliderSliderLabel: 'Välj bild',
+                OWIDSliderSelectRegion: 'Välj region',
+                OWIDSliderPlayLabel: 'Visa bildspel',
+                OWIDSliderLoading: 'Laddar... $1%'
+			},
+			tr: {
+				OWIDSliderFrameBack: 'Haritaya dön',
+				OWIDSliderFrameBackDesktop: 'Makaleye dön',
+				OWIDSliderFrameImageCredit: 'Medya kredileri',
+				OWIDSliderFrameCopyLink: 'Doğrudan Bağlantıyı Kopyala',
+				OWIDSliderSliderLabel: 'Resim seç',
+				OWIDSliderSelectRegion: 'Bölge seçin',
+				OWIDSliderPlayLabel: 'Slayt gösterisini göster',
+				OWIDSliderLoading: 'Yükleniyor... $1%'	
+			},	
 			uk: {
 				OWIDSliderFrameBack: 'Назад',
 				OWIDSliderFrameBackDesktop: 'Повернутись до статті',
@@ -1027,6 +1048,8 @@ var OWIDSlider = {
 			viewMin;
 		var countriesUrls = Object.create( null );
 		var countriesInfoUrls = Object.create( null );
+		var regionsChartsUrls = Object.create( null );
+		var regionsChartsInfoUrls = Object.create( null );
 		this.translatedCountryNames = Object.create( null );
 		for ( var galleryName in subIds ) {
 			var galleryId = subIds[ galleryName ];
@@ -1034,8 +1057,10 @@ var OWIDSlider = {
 			if ( !elm ) {
 				throw new Error( 'Could not find gallery with id ' + galleryId );
 			}
-			if ( galleryName === 'AllCountries' ) {
+			if ( galleryName === 'AllCountries') {
 				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderCountry );
+			} else if (galleryName === 'RegionsCharts') {
+				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderRegionsChart );
 			} else {
 				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderYear );
 			}
@@ -1049,7 +1074,19 @@ var OWIDSlider = {
 			var imgs = elm.querySelectorAll(
 				'img.mw-file-element, span[typeof~="mw:Error"][typeof~="mw:File"]'
 			);
-			if ( galleryName === 'AllCountries' ) {
+			if ( galleryName === 'RegionsCharts' ) {
+				for ( var j = 0; j < imgs.length; j++ ) {
+					if ( imgs[ j ].nodeName !== 'IMG' ) {
+						continue;
+					}
+					regionsChartsUrls[ years[ galleryName ][ j ] ]  = this.convertThumbUrlToOriginal(
+						imgs[ j ].getAttribute( 'src' )
+					);
+					if ( imgs[ j ].parentElement.href ) {
+						regionsChartsInfoUrls[ years[ galleryName ][ j ] ] = imgs[ j ].parentElement.href;
+					}
+				}
+			} else if ( galleryName === 'AllCountries' ) {
 				for ( var j = 0; j < imgs.length; j++ ) {
 					if ( imgs[ j ].nodeName !== 'IMG' ) {
 						continue;
@@ -1058,8 +1095,8 @@ var OWIDSlider = {
 						imgs[ j ].getAttribute( 'src' )
 					);
 					if ( imgs[ j ].parentElement.href ) {
-			countriesInfoUrls[ years[ galleryName ][ j ] ] = imgs[ j ].parentElement.href;
-	}
+						countriesInfoUrls[ years[ galleryName ][ j ] ] = imgs[ j ].parentElement.href;
+					}
 				}
 			} else {
 				imgMap[ galleryName ] = [];
@@ -1094,6 +1131,8 @@ var OWIDSlider = {
 			urls,
 			countriesUrls,
 			countriesInfoUrls,
+			regionsChartsUrls,
+			regionsChartsInfoUrls,
 			width,
 			height,
 			min,
@@ -1219,6 +1258,8 @@ var OWIDSlider = {
 		urls,
 		countriesUrls,
 		countriesInfoUrls,
+		regionsChartsUrls,
+		regionsChartsInfoUrls,
 		width,
 		height,
 		min,
@@ -1229,6 +1270,9 @@ var OWIDSlider = {
 		this.svgUrls = urls;
 		this.countriesSvgUrls = countriesUrls;
 		this.countriesInfoUrls = countriesInfoUrls;
+		this.regionsChartsUrls = regionsChartsUrls;
+		this.regionsChartsInfoUrls = regionsChartsInfoUrls;
+		console.log({regionsChartsUrls, regionsChartsInfoUrls});
 		this.translatedCountryNames = Object.create( null );
 		this.$viewer = $viewer;
 		this.loop = !!config.loop;
@@ -1396,12 +1440,7 @@ OWIDSlider.Context.prototype = {
 				.attr( 'id', 'OWIDSliderViewSelector' )
 				.attr( 'class', 'owid-select' );
 			for ( var i in this.imgs ) {
-				var optionName = i;
-				if ( optionName === 'NorthAmerica' ) {
-					optionName = 'North America';
-				} else if ( optionName === 'SouthAmerica' ) {
-					optionName = 'South America';
-				}
+				var optionName = i.replace(/([A-Z])/g, ' $1').trim();
 				$select.append(
 					$( '<option>' )
 						.attr( { value: i, selected: this.currentView === i } )
@@ -1414,6 +1453,7 @@ OWIDSlider.Context.prototype = {
 				that.urlsLoaded = 0;
 				that.$loading = that.createLoader();
 				that.preload();
+				that.loadRegionChartSwitch();
 			} );
 			var selectContainer = $( '<div>' ).attr( 'class', 'owid-select-container' );
 			var selectArrow = $( '<span>' ).attr( 'class', 'owid-select-arrow' );
@@ -1425,8 +1465,8 @@ OWIDSlider.Context.prototype = {
 		}
 
 		var $container = $( '<div class="OWIDSliderImgContainer"></div>' )
-			.append( $select )
-			.append( $svgContainer )
+			.append( $select );
+		$container.append( $svgContainer )
 			.append( $creditDiv )
 			.append( this.$sliderContainer );
 		this.$countrySelect = $select;
@@ -1453,12 +1493,40 @@ OWIDSlider.Context.prototype = {
 		this.getUrls();
 		// this.toggleImg();
 		this.preload();
+		this.loadRegionChartSwitch();
 		if ( this.language && this.language !== 'en' ) {
 			this.populateTranslatedCountriesNames();
 		}
 		this.$slider.focus();
 	},
+	loadRegionChartSwitch: function() {
+		if (this.$regionChartBtnContainer) {
+			this.$regionChartBtnContainer.remove();
+		}
 
+		this.$regionChartBtnContainer = null;
+		if (this.regionsChartsUrls != null && this.regionsChartsUrls[this.currentView]) {
+			this.$regionChartBtnContainer = $( '<div>' ).attr( 'class', 'owid-region-chart-container' );
+			var regionBtnLabel = mw.msg( 'OWIDSliderShowRegionGraph' );
+			var $regionBtn = $( '<button></button>' )
+				.attr( {
+					type: 'button',
+					class: 'OWIDSlider-country-back',
+					title: regionBtnLabel,
+					'aria-label': regionBtnLabel
+				} )
+				.text( regionBtnLabel );
+			$regionBtn.on(
+				'click',
+				function () {
+					this.loadRegionChart(this.currentView);
+					this.$regionChartBtnContainer.remove();
+				}.bind( this )
+			);
+			this.$regionChartBtnContainer.append($regionBtn);
+			this.$countrySelect.after(this.$regionChartBtnContainer);
+		}
+	},
 	getMaxImgDim: function () {
 		// This assumes that even on high-DPI displays, enlarging to 96dpi is ok.
 		var w = this.imgs[ this.viewMin ][ this.min ].width;
@@ -1853,7 +1921,7 @@ OWIDSlider.Context.prototype = {
 		var that = this;
 		// var funcArray = []; /* eslint no-unused var*/
 		if ( !this.svgYears ) {
-		this.svgYears = Object.create( null );
+			this.svgYears = Object.create( null );
 		}
 
 		var svgs = [];
@@ -1861,7 +1929,7 @@ OWIDSlider.Context.prototype = {
 		var firstSvg = viewSvgs[ this.min ];
 		fetch( firstSvg.url )
 			.then( function ( res ) {
-		return res.text();
+				return res.text();
 			} )
 			.then( function ( svgData ) {
 		// We need to extract the years first, cause DOMPurify removes the years metadata
@@ -1869,11 +1937,11 @@ OWIDSlider.Context.prototype = {
 		var svgDoc = parser.parseFromString( svgData, 'image/svg+xml' );
 		var years = svgDoc.querySelectorAll( 'metadata years year' );
 
-				// Then let's purify
-				svgData = OWIDSlider.purify( svgData );
-				svgData = svgData.replaceAll( '&nbsp;', '' );
+		// Then let's purify
+		svgData = OWIDSlider.purify( svgData );
+		svgData = svgData.replaceAll( '&nbsp;', '' );
 
-				parser = new DOMParser();
+		parser = new DOMParser();
 		svgDoc = parser.parseFromString( svgData, 'image/svg+xml' );
 		if ( years.length > 0 ) {
 			var yearsObj = Object.create( null );
@@ -1935,21 +2003,21 @@ OWIDSlider.Context.prototype = {
 	} else {
 			// TODO: Ask user to import or fallback to prev flow
 			for ( var i = that.min; i <= that.max; i++ ) {
-			var svgUrl = that.svgUrls[ that.currentView ][ i ];
-			if ( svgUrl ) {
-				svgUrl = svgUrl.url;
-			} else {
-				continue;
-			}
-				// Previousely cached
-			if ( that.cachedSvgs[ svgUrl ] ) {
-				continue;
+				var svgUrl = that.svgUrls[ that.currentView ][ i ];
+				if ( svgUrl ) {
+					svgUrl = svgUrl.url;
+				} else {
+					continue;
 				}
-			svgs.push( svgUrl );
+					// Previousely cached
+				if ( that.cachedSvgs[ svgUrl ] ) {
+					continue;
+				}
+				svgs.push( svgUrl );
 			}
-					that.processArray( svgs, that.loadAndCacheSvgs.bind( that ) );
-					that.toggleImg();
-			}
+			that.processArray( svgs, that.loadAndCacheSvgs.bind( that ) );
+			that.toggleImg();
+	}
 			} );
 
 	},
@@ -2155,7 +2223,36 @@ OWIDSlider.Context.prototype = {
 			delete this.pendingTouches[ t.identifier ];
 		}
 	},
-
+	loadRegionChart: function (region) {
+		var url = this.regionsChartsUrls[ region ];
+		if ( url ) {
+			if ( this.cachedCountriesSvgs[ url ] ) {
+				this.paintCountryChart( this.cachedCountriesSvgs[ url ] );
+				this.$credit[ 0 ].href = this.regionsChartsInfoUrls[ region ];
+			} else {
+				var that = this;
+				this.originalContainerContent = this.$svgContainer.html();
+				this.$svgContainer.html( this.$loader.html() );
+				fetch( url )
+					.then( function ( data ) {
+						return data.text();
+					} )
+					.then( function ( content ) {
+						content = OWIDSlider.purify( content );
+						that.cachedCountriesSvgs[ url ] = content;
+						that.setSvg( that.originalContainerContent );
+						that.paintCountryChart( content );
+			that.$credit[ 0 ].href = that.regionsChartsInfoUrls[ region ];
+					} )
+					.catch( function ( err ) {
+						console.log( 'Error getting country svg', err );
+					} );
+			}
+		} else {
+			// Country not imported
+			this.paintCountryChart( this.getCountryNotFound() );
+		}
+	},
 	initSVGControls: function ( countriesUrls ) {
 		this.HIGHLIGHTED_STROKE_WIDTH = 1;
 		this.DEFAULT_STROKE_WIDTH = 0.3;
@@ -2538,19 +2635,19 @@ OWIDSlider.Context.prototype = {
 					countryLabel[ 0 ].textContent = translatedName;
 				}
 
-				that.applyCountryChartPaint( content, scaledContent );
+				that.applyCountryChartPaint( scaledContent );
 				} )
 				.catch( function ( err ) {
 					console.log( 'Error getting translated country name: ', err );
-				that.applyCountryChartPaint( content, scaledContent );
+				that.applyCountryChartPaint( scaledContent );
 						} );
 					return;
 			}
 			}
 		}
-		this.applyCountryChartPaint( content, scaledContent );
+		this.applyCountryChartPaint( scaledContent );
 	},
-	applyCountryChartPaint: function ( content, scaledContent ) {
+	applyCountryChartPaint: function ( scaledContent ) {
 		scaledContent.on( 'click', function ( e ) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -2580,6 +2677,7 @@ OWIDSlider.Context.prototype = {
 				setTimeout(
 					function () {
 						this.$countrySelect.css( 'display', 'inline-block' );
+						this.loadRegionChartSwitch();
 						this.initSVGControls();
 					}.bind( this ),
 					100
