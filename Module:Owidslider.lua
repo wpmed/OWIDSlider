@@ -1,6 +1,36 @@
 local p = {}
 local COUNTRIES_GALLERY_NAME = "AllCountries"
 local REGIONS_GALLERY_NAME = "RegionsCharts"
+local hasWikidataLabel, wd = pcall(require, 'Module:Wikidata label')
+if not hasWikidataLabel then
+	wd = nil
+end
+
+local function translateGalleryName( galleryName, translations )
+	if wd ~= nil and translations[galleryName] ~= nil and type( wd._getLabel ) == 'function' then
+		local ok, translatedName = pcall(
+			wd._getLabel,
+			translations[galleryName],
+			nil,
+			'no',
+			'ucfirst'
+		)
+
+		if ok and translatedName ~= nil and translatedName ~= '' then
+			return translatedName
+		end
+	end
+
+	return galleryName
+end
+
+local function copyTable( source )
+	local result = {}
+	for key, value in pairs( source ) do
+		result[key] = value
+	end
+	return result
+end
 
 function p.image( frame )
 	math.randomseed(tonumber(mw.getContentLanguage():formatDate( "U" ))*10000 + os.clock()*10000)
@@ -61,7 +91,8 @@ function p.image( frame )
 
 end
 
-local function srcGallery( frame, galleryName, gallerySrc, galleryArgs )
+local function srcGallery( frame, galleryName, gallerySrc, baseGalleryArgs )
+	local galleryArgs = copyTable( baseGalleryArgs )
 	local id = mw.uri.anchorEncode( "gallery-" .. galleryName )
 	galleryArgs.id = id
 	local optionsArray = {}
@@ -72,7 +103,7 @@ local function srcGallery( frame, galleryName, gallerySrc, galleryArgs )
 		local country = false
 		local region = false
 		for part in mw.text.gsplit( row, "!", true ) do
-			equalSplit = mw.text.split( part, '=', true )
+			local equalSplit = mw.text.split( part, '=', true )
 			if #equalSplit <= 1 then
 				galleryRow = galleryRow .. part .. '|'
 			else
@@ -104,7 +135,7 @@ local function srcGallery( frame, galleryName, gallerySrc, galleryArgs )
 	if galleryName == COUNTRIES_GALLERY_NAME then
 		galleryArgs['data-owidslider-country'] = mw.text.jsonEncode( optionsArray )
 	elseif galleryName == REGIONS_GALLERY_NAME then
-		galleryArgs['data-owidslider-regions-chart'] = mw.text.jsonEncode( optionsArray )
+		galleryArgs['data-owidslider-regionscharts'] = mw.text.jsonEncode( optionsArray )
 	else
 		galleryArgs['data-owidslider-year'] = mw.text.jsonEncode( optionsArray )	
 	end
@@ -122,6 +153,16 @@ function p.srcs( frame )
 	end
 	local subItems = {}
 	local output = ''
+	local translations = {
+		Africa = "Q15",
+		Antarctica = "Q51",
+		Asia = "Q48",
+		Europe = "Q46",
+		["North America"] = "Q49",
+		Oceania = "Q55643",
+		["South America"] = "Q18",
+		World = "Q16502"  -- Bit iffy, maybe should be Q2 instead.
+	}
 
 	-- Make World gallery show up first.
 	local galleries = {}
@@ -143,7 +184,8 @@ function p.srcs( frame )
 	for _, argName in ipairs( galleries ) do
 		local argValue = args[argName]
 		if string.sub( argName, 0, 7 ) == "gallery" then
-			local galleryName = string.sub( argName, 9 )
+			local rawGalleryName = string.sub( argName, 9 )
+			local galleryName = translateGalleryName( rawGalleryName, translations )
 			subItems[galleryName] = mw.uri.anchorEncode( "gallery-" .. galleryName )
 			local srcGalleryOutput = srcGallery( frame, galleryName, argValue, galleryArgs )
 			output = output .. srcGalleryOutput
@@ -188,7 +230,7 @@ function p.gallery( frame )
 		local galleryRow = ''
 		local popupOptions = { title = title, caption = captionId }
 		for part in mw.text.gsplit( row, "!", true ) do
-			equalSplit = mw.text.split( part, '=', true )
+			local equalSplit = mw.text.split( part, '=', true )
 			if #equalSplit <= 1 then
 				-- be sure this really is a caption.
 				if galleryRow ~= '' and
