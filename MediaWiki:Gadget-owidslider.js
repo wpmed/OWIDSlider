@@ -143,7 +143,7 @@ var OWIDSlider = {
 				OWIDSliderPlayLabel: 'स्लाइडशो दिखाएं',
 				OWIDSliderLoading: 'लोड हो रहा है... $1%'
 			},
-			jp: {
+			ja: {
 				OWIDSliderFrameBack: '戻る',
 				OWIDSliderFrameBackDesktop: '記事に戻る',
 				OWIDSliderFrameImageCredit: 'メディアクレジット',
@@ -979,37 +979,50 @@ var OWIDSlider = {
 		);
 		return $viewer;
 	},
+	loadCommonsTemmplate: function(list, language) {
+		return new Promise(function(resolve, reject) {
+			var api = new mw.Api({
+				userAgent: 'OWIDSlider',
+				ajax: {
+					url: 'https://commons.wikimedia.org/w/api.php'
+				}
+			});
+			api.get({
+				action: 'parse',
+				page: list,
+				format: 'json',
+				prop: 'text',
+				uselang: language,
+				origin: '*', // This helps with CORS,
+				redirects: "1",
+			})
+			.then( function ( res ) {
+				console.log({res})
+				if ( res.parse ) {
+					const text = res.parse.text[ '*' ];
+					resolve(text);
+				}
+			}).catch( function ( error ) {
+				console.error( 'Error:', error );
+			});
+		});
+	},
 	loadImages: function ( $viewer, data ) {
 		var url = '';
 		var page = mw.Title.newFromText( data.list );
-		if ( !page ) {
-		console.log( 'Image stack error, invalid page ' + data.list );
-		return;
+		if (!page) {
+			console.log( 'Image stack error, invalid page ' + data.list );
+			return;
 		}
-		if ( data.location && data.location.toLowerCase() === 'commons' ) {
+		if (data.location && data.location.toLowerCase() === 'commons') {
 		// var templateName = page.title; /* eslint no-unused var*/
-
-			var api = new mw.Api( {
-				userAgent: 'OWIDSlider',
-			ajax: {
-				url: 'https://commons.wikimedia.org/w/api.php'
-			}
-			} );
-			api.get( {
-			action: 'parse',
-			page: data.list,
-			format: 'json',
-			prop: 'text',
-				uselang: data.language,
-			origin: '*' // This helps with CORS
-			} ).then( function ( res ) {
-			if ( res.parse ) {
-				const text = res.parse.text[ '*' ];
-					return OWIDSlider.handlePage( $viewer, data, text );
-		}
-			} ).catch( function ( error ) {
-			console.error( 'Error:', error );
-			} );
+			this.loadCommonsTemmplate(data.list, data.language)
+			.then(function(text) {
+				return OWIDSlider.handlePage( $viewer, data, text );
+			})
+			.catch(function(err) {
+				console.log("Error loading list: ", err);
+			});
 		} else {
 			url = page.getUrl();
 			fetch( url )
@@ -1279,7 +1292,6 @@ var OWIDSlider = {
 		this.countriesInfoUrls = countriesInfoUrls;
 		this.regionsChartsUrls = regionsChartsUrls;
 		this.regionsChartsInfoUrls = regionsChartsInfoUrls;
-		console.log({regionsChartsUrls, regionsChartsInfoUrls});
 		this.translatedCountryNames = Object.create( null );
 		this.$viewer = $viewer;
 		this.loop = !!config.loop;
