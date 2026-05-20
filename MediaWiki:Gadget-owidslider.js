@@ -1054,15 +1054,22 @@ var OWIDSlider = {
 		for ( var galleryName in subIds ) {
 			var galleryId = subIds[ galleryName ];
 			var elm = listDoc.getElementById( galleryId );
-			if ( !elm ) {
-				throw new Error( 'Could not find gallery with id ' + galleryId );
-			}
-			if ( galleryName === 'AllCountries') {
-				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderCountry );
-			} else if (galleryName === 'RegionsCharts') {
-				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderRegionsChart );
-			} else {
-				years[ galleryName ] = JSON.parse( elm.dataset.owidsliderYear );
+			try {
+				if ( !elm ) {
+					throw new Error( 'Could not find gallery with id ' + galleryId );
+				}
+
+				if ( galleryName === 'AllCountries') {
+					years[ galleryName ] = JSON.parse( elm.dataset.owidsliderCountry );
+				} else if (galleryName === 'RegionsCharts') {
+					var jsonContent = elm.dataset.owidsliderRegionscharts || data.dataset.owidsliderRegionsChart;
+					years[ galleryName ] = JSON.parse( jsonContent );
+				} else {
+					years[ galleryName ] = JSON.parse( elm.dataset.owidsliderYear );
+				}
+			} catch(err) {
+				console.log("error parsing dataset content for gallery", galleryName, err)
+				continue
 			}
 			if (
 				!( years[ galleryName ] instanceof Array ) ||
