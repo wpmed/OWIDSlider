@@ -120,6 +120,74 @@
   flex-direction: column;
 }
 
+.owid-controls-row {
+  display: flex;
+  justify-content: space-between;
+  /* Top-align so the region selector stays level with the radio row when a warning grows the left column. */
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Let the region dropdown fill remaining row width; stay top-aligned when the radios column gains a warning line. */
+.owid-controls-row .owid-select-container:has(#OWIDSliderViewSelector) {
+  flex: 1 1 250px;
+  align-self: flex-start;
+}
+
+.owid-viewmode-container {
+  flex: 0 0 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-self: flex-start;
+}
+
+.owid-viewmode-select {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.owid-viewmode-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.owid-viewmode-option input[type="radio"] {
+  margin: 0;
+}
+
+.owid-line-historical-data-msg {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px 0;
+  font-size: 12px;
+  line-height: 1.3;
+  color: #c62828;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.owid-view-type-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  text-align: right;
+  margin-left: auto;
+}
+
+#OWIDSliderMessage {
+  display: none;
+}
+
 #OWIDSliderLoading {
   position: fixed;
   padding-top: 0.25em;

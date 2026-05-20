@@ -1202,6 +1202,119 @@ var OWIDSlider = {
 		return urls;
 	},
 
+	/**
+	 * @param {string} lineKeyCandidate
+	 * @param {Array<string>} keysArr
+	 * @return {null|string} base region gallery key when lineKeyCandidate is a paired "...Line" stack
+	 */
+	regionBaseFromPairedLineKey: function ( lineKeyCandidate, keysArr ) {
+		var k = String( lineKeyCandidate );
+		if ( k.toLowerCase() === 'line' ) {
+			return null;
+		}
+		var m = k.match( /^(.+)_line$/i );
+		var baseGuess = null;
+		if ( m ) {
+			baseGuess = m[ 1 ];
+		} else {
+			m = k.match( /^(.+)Line$/ );
+			if ( m ) {
+				baseGuess = m[ 1 ];
+			}
+		}
+		if ( !baseGuess ) {
+			return null;
+		}
+		var base = keysArr.find( function ( x ) {
+			return x === baseGuess;
+		} );
+		if ( !base ) {
+			base = keysArr.find( function ( x ) {
+				return String( x ).toLowerCase() === String( baseGuess ).toLowerCase();
+			} );
+		}
+		if ( !base ) {
+			return null;
+		}
+		return base;
+	},
+
+	filterRegionSliderSelectKeys: function ( keysArr ) {
+		return keysArr.filter( function ( k ) {
+			return OWIDSlider.regionBaseFromPairedLineKey( k, keysArr ) === null;
+		} );
+	},
+
+	logicalRegionKeyFromStartingGallery: function ( startKey, imgs, keysArr ) {
+		var keys = keysArr || Object.keys( imgs );
+		if ( startKey && imgs[ startKey ] ) {
+			var base = OWIDSlider.regionBaseFromPairedLineKey( startKey, keys );
+			if ( base ) {
+				return base;
+			}
+			return startKey;
+		}
+		var regions = OWIDSlider.filterRegionSliderSelectKeys( keys );
+		return regions[ 0 ] || keys[ 0 ];
+	},
+
+	resolveSliderMapGalleryKey: function ( logical, imgs, keys ) {
+		if ( logical && imgs[ logical ] ) {
+			return logical;
+		}
+		var mapKey = keys.find( function ( k ) {
+			return String( k ).toLowerCase() === 'map';
+		} );
+		if ( mapKey && imgs[ mapKey ] ) {
+			return mapKey;
+		}
+		var first = keys.find( function ( k ) {
+			return imgs[ k ];
+		} );
+		return first || keys[ 0 ];
+	},
+
+	resolveSliderLineGalleryKey: function ( logical, imgs, keys ) {
+		if ( !logical ) {
+			return null;
+		}
+		var r = String( logical );
+		var tries = [ r + 'Line', r + '_line', r + '-line', r + ' Line' ];
+		for ( var t = 0; t < tries.length; t++ ) {
+			var cand = tries[ t ];
+			var found = keys.find( function ( k ) {
+				return k === cand;
+			} );
+			if ( found && imgs[ found ] ) {
+				return found;
+			}
+			var candLo = cand.toLowerCase().replace( /\s+/g, '' );
+			found = keys.find( function ( k ) {
+				return String( k ).toLowerCase().replace( /\s+/g, '' ) === candLo;
+			} );
+			if ( found && imgs[ found ] ) {
+				return found;
+			}
+		}
+		var lineKey = keys.find( function ( k ) {
+			return String( k ).toLowerCase() === 'line';
+		} );
+		if ( lineKey && imgs[ lineKey ] ) {
+			return lineKey;
+		}
+		return null;
+	},
+
+	galleryKeyForSliderMode: function ( logical, mode, imgs, keys ) {
+		if ( mode === 'line' ) {
+			var lineG = OWIDSlider.resolveSliderLineGalleryKey( logical, imgs, keys );
+			if ( lineG && imgs[ lineG ] ) {
+				return lineG;
+			}
+		}
+		return OWIDSlider.resolveSliderMapGalleryKey( logical, imgs, keys );
+	},
+
 	doStats: function () {
 		if ( window.OWIDSliderStatsAlreadyDone !== true ) {
 			window.OWIDSliderStatsAlreadyDone = true;
@@ -1287,12 +1400,21 @@ var OWIDSlider = {
 		this.urls = null;
 		this.infoUrls = null;
 		this.imgs = imgs;
+		this._allGalleryKeys = Object.keys( imgs );
 		this.min = min;
 		this.max = max;
 		this.viewMin = viewMin; // The view that has the min element
-		this.currentView = config.startingView && imgs[ config.startingView ] ?
-			config.startingView :
-			Object.keys( imgs )[ 0 ];
+		var startGallery =
+			config.startingView && imgs[ config.startingView ] ?
+				config.startingView :
+				null;
+		this.logicalRegionKey = OWIDSlider.logicalRegionKeyFromStartingGallery(
+			startGallery,
+			imgs,
+			this._allGalleryKeys
+		);
+		this.sliderViewMode = 'map';
+		this.recomputeCurrentSliderGalleryKey();
 		this.language = config.language ? config.language.trim() : '';
 		this.total = Object.keys( imgs[ this.currentView ] ).length;
 		// for (var i in imgs) {
@@ -1442,25 +1564,105 @@ OWIDSlider.Context.prototype = {
 			.append( this.$credit );
 
 		var $select = '';
+		var $viewModeContainer = null;
 		if ( Object.keys( this.imgs ).length >= 0 ) {
+			var viewKeys = this._allGalleryKeys;
+			var regionSelectKeys = OWIDSlider.filterRegionSliderSelectKeys(
+				viewKeys
+			);
+			if ( regionSelectKeys.length === 0 ) {
+				regionSelectKeys = viewKeys.slice();
+			}
+			if (
+				!regionSelectKeys.some( function ( k ) {
+					return k === that.logicalRegionKey;
+				} )
+			) {
+				var lrLo = String( that.logicalRegionKey ).toLowerCase();
+				var foundLr = regionSelectKeys.find( function ( k ) {
+					return String( k ).toLowerCase() === lrLo;
+				} );
+				that.logicalRegionKey = foundLr || regionSelectKeys[ 0 ];
+				that.recomputeCurrentSliderGalleryKey();
+				that.total = Object.keys( that.imgs[ that.currentView ] ).length;
+			}
+
+			function formatGalleryKeyLabel( key ) {
+				return String( key ).replace( /([A-Z])/g, ' $1' ).trim();
+			}
+
+			function syncRadiosFromSliderMode() {
+				if ( !$viewModeContainer ) {
+					return;
+				}
+				$viewModeContainer.find( '.owid-viewmode-map' ).prop(
+					'checked',
+					that.sliderViewMode === 'map'
+				);
+				$viewModeContainer.find( '.owid-viewmode-line' ).prop(
+					'checked',
+					that.sliderViewMode === 'line'
+				);
+			}
+
+			var $mapInput,
+				$lineInput;
+
+			function updateLineRadioEnabled() {
+				// Always keep Line clickable unless it would toggle the exact same gallery as Map (so users
+				// can attempt Line and hit the missing-data message when naming/API does not match).
+				var lineGalleryTry = OWIDSlider.resolveSliderLineGalleryKey(
+					that.logicalRegionKey,
+					that.imgs,
+					that._allGalleryKeys
+				);
+				var mapGalleryTry = OWIDSlider.resolveSliderMapGalleryKey(
+					that.logicalRegionKey,
+					that.imgs,
+					that._allGalleryKeys
+				);
+				var lineUnavailable =
+					!Object.keys( that.imgs ).length ||
+					( lineGalleryTry &&
+						mapGalleryTry &&
+						lineGalleryTry === mapGalleryTry );
+				$lineInput.prop( 'disabled', !!lineUnavailable );
+			}
+
 			$select = $( '<select>' )
 				.attr( 'id', 'OWIDSliderViewSelector' )
 				.attr( 'class', 'owid-select' );
-			for ( var i in this.imgs ) {
-				var optionName = i.replace(/([A-Z])/g, ' $1').trim();
+			for ( var rsi = 0; rsi < regionSelectKeys.length; rsi++ ) {
+				var rk = regionSelectKeys[ rsi ];
+				var regionOptionName = rk.replace(/([A-Z])/g, ' $1').trim();
 				$select.append(
 					$( '<option>' )
-						.attr( { value: i, selected: this.currentView === i } )
-						.text( optionName )
+						.attr( {
+							value: rk,
+							selected: rk === that.logicalRegionKey
+						} )
+						.text( regionOptionName )
 				);
 			}
+
 			$select.change( function ( e ) {
-				that.currentView = e.target.value;
-				that.total = Object.keys( that.imgs[ that.currentView ] ).length;
-				that.urlsLoaded = 0;
-				that.$loading = that.createLoader();
-				that.preload();
-				that.loadRegionChartSwitch();
+				that.logicalRegionKey = e.target.value;
+				if ( that.sliderViewMode === 'line' ) {
+					var lineGAdjust = OWIDSlider.resolveSliderLineGalleryKey(
+						that.logicalRegionKey,
+						that.imgs,
+						that._allGalleryKeys
+					);
+					if (
+						!that.lineGalleryHasSliderData( lineGAdjust )
+					) {
+						that.sliderViewMode = 'map';
+					}
+				}
+				that.hideLineHistoricalDataMessage();
+				that.reloadSliderForLogicalState();
+				updateLineRadioEnabled();
+				syncRadiosFromSliderMode();
 			} );
 			var selectContainer = $( '<div>' ).attr( 'class', 'owid-select-container' );
 			var selectArrow = $( '<span>' ).attr( 'class', 'owid-select-arrow' );
@@ -1469,10 +1671,84 @@ OWIDSlider.Context.prototype = {
 				.text( mw.msg( 'OWIDSliderSelectRegion' ) );
 			selectContainer.append( $select ).append( selectArrow ).append( selectLabel );
 			$select = selectContainer;
+
+			// Map/line radios: logical region stays in the dropdown; currentView swaps map vs paired line stacks.
+			$viewModeContainer = $( '<div></div>' ).attr( 'class', 'owid-select-container owid-viewmode-container' );
+			var $viewModeInner = $( '<div></div>' ).attr( 'class', 'owid-select owid-viewmode-select' );
+
+			var $mapOpt = $( '<label></label>' ).attr( 'class', 'owid-viewmode-option' );
+			$mapInput = $( '<input>', {
+				type: 'radio',
+				name: 'OWIDSliderViewMode',
+				class: 'owid-viewmode-map'
+			} ).prop( 'checked', that.sliderViewMode === 'map' );
+			$mapInput.on( 'change', function () {
+				that.hideLineHistoricalDataMessage();
+				that.sliderViewMode = 'map';
+				that.reloadSliderForLogicalState();
+				syncRadiosFromSliderMode();
+				updateLineRadioEnabled();
+			} );
+			$mapOpt.append( $mapInput ).append( $( '<span></span>' ).text( 'map' ) );
+
+			var $lineOpt = $( '<label></label>' ).attr( 'class', 'owid-viewmode-option' );
+			$lineInput = $( '<input>', {
+				type: 'radio',
+				name: 'OWIDSliderViewMode',
+				class: 'owid-viewmode-line'
+			} ).prop(
+				'checked',
+				that.sliderViewMode === 'line'
+			);
+			$lineInput.on( 'change', function () {
+				if ( !$lineInput.prop( 'checked' ) ) {
+					return;
+				}
+				var lineGallery = OWIDSlider.resolveSliderLineGalleryKey(
+					that.logicalRegionKey,
+					that.imgs,
+					that._allGalleryKeys
+				);
+				if ( !that.lineGalleryHasSliderData( lineGallery ) ) {
+					that.$lineHistoricalDataMessage
+						.text(
+							'historical data for ' +
+							formatGalleryKeyLabel(
+								that.logicalRegionKey
+							) +
+								' does not exists'
+						)
+						.show();
+					syncRadiosFromSliderMode();
+					return;
+				}
+				that.hideLineHistoricalDataMessage();
+				that.sliderViewMode = 'line';
+				that.reloadSliderForLogicalState();
+				syncRadiosFromSliderMode();
+				updateLineRadioEnabled();
+			} );
+			$lineOpt.append( $lineInput ).append( $( '<span></span>' ).text( 'line' ) );
+
+			updateLineRadioEnabled();
+
+			$viewModeInner.append( $mapOpt ).append( $lineOpt );
+			that.$lineHistoricalDataMessage = $( '<div></div>' )
+				.addClass( 'owid-line-historical-data-msg' )
+				.attr( 'role', 'status' )
+				.hide();
+			$viewModeContainer.append( $viewModeInner ).append( that.$lineHistoricalDataMessage );
+			syncRadiosFromSliderMode();
 		}
 
-		var $container = $( '<div class="OWIDSliderImgContainer"></div>' )
-			.append( $select );
+		var $container = $( '<div class="OWIDSliderImgContainer"></div>' );
+		if ( $select && typeof $viewModeContainer !== 'undefined' && $viewModeContainer ) {
+			var $controlsRow = $( '<div></div>' ).attr( 'class', 'owid-controls-row' );
+			$controlsRow.append( $viewModeContainer ).append( $select );
+			$container.append( $controlsRow );
+		} else {
+			$container.append( $select );
+		}
 		$container.append( $svgContainer )
 			.append( $creditDiv )
 			.append( this.$sliderContainer );
@@ -1506,13 +1782,76 @@ OWIDSlider.Context.prototype = {
 		}
 		this.$slider.focus();
 	},
+	recomputeCurrentSliderGalleryKey: function () {
+		this.currentView = OWIDSlider.galleryKeyForSliderMode(
+			this.logicalRegionKey,
+			this.sliderViewMode,
+			this.imgs,
+			this._allGalleryKeys
+		);
+		if ( !this.currentView || !this.imgs[ this.currentView ] ) {
+			this.sliderViewMode = 'map';
+			this.currentView = OWIDSlider.resolveSliderMapGalleryKey(
+				this.logicalRegionKey,
+				this.imgs,
+				this._allGalleryKeys
+			);
+		}
+		this.total = Object.keys( this.imgs[ this.currentView ] ).length;
+	},
+
+	reloadSliderForLogicalState: function () {
+		this.recomputeCurrentSliderGalleryKey();
+		this.urlsLoaded = 0;
+		this.$loading = this.createLoader();
+		this.preload();
+		this.loadRegionChartSwitch();
+	},
+
+	syncMapLineRadiosFromSliderMode: function () {
+		if ( !this.$container || !this.$container.length ) {
+			return;
+		}
+		var $scope = this.$container;
+		$scope.find( '.owid-viewmode-map' ).prop(
+			'checked',
+			this.sliderViewMode === 'map'
+		);
+		$scope.find( '.owid-viewmode-line' ).prop(
+			'checked',
+			this.sliderViewMode === 'line'
+		);
+	},
+
+	lineGalleryHasSliderData: function ( lineGalleryKey ) {
+		if ( !lineGalleryKey || !this.imgs[ lineGalleryKey ] ) {
+			return false;
+		}
+		var row = this.imgs[ lineGalleryKey ];
+		var urlsRow = this.svgUrls && this.svgUrls[ lineGalleryKey ];
+		return !!(
+			row &&
+			urlsRow &&
+			row[ this.min ] &&
+			urlsRow[ this.min ] &&
+			urlsRow[ this.min ].url
+		);
+	},
+	hideLineHistoricalDataMessage: function () {
+		if ( this.$lineHistoricalDataMessage && this.$lineHistoricalDataMessage.length ) {
+			this.$lineHistoricalDataMessage.hide().text( '' );
+		}
+	},
 	loadRegionChartSwitch: function() {
 		if (this.$regionChartBtnContainer) {
 			this.$regionChartBtnContainer.remove();
 		}
 
 		this.$regionChartBtnContainer = null;
-		if (this.regionsChartsUrls != null && this.regionsChartsUrls[this.currentView]) {
+		if (
+			this.regionsChartsUrls != null &&
+			this.regionsChartsUrls[ this.logicalRegionKey ]
+		) {
 			this.$regionChartBtnContainer = $( '<div>' ).attr( 'class', 'owid-region-chart-container' );
 			var regionBtnLabel = mw.msg( 'OWIDSliderShowRegionGraph' );
 			var $regionBtn = $( '<button></button>' )
@@ -1526,7 +1865,7 @@ OWIDSlider.Context.prototype = {
 			$regionBtn.on(
 				'click',
 				function () {
-					this.loadRegionChart(this.currentView);
+					this.loadRegionChart(this.logicalRegionKey);
 					this.$regionChartBtnContainer.remove();
 				}.bind( this )
 			);
@@ -2688,6 +3027,9 @@ OWIDSlider.Context.prototype = {
 		$back.on(
 			'click',
 			function () {
+				this.sliderViewMode = 'map';
+				this.hideLineHistoricalDataMessage();
+				this.syncMapLineRadiosFromSliderMode();
 				this.$svgContainer.html( '' ).append( this.originalContainerContent );
 				this.$credit[ 0 ].href = this.infoUrls[ this.currentView ][ this.currentImage ];
 				$backContainer.remove();
@@ -2701,6 +3043,15 @@ OWIDSlider.Context.prototype = {
 				);
 			}.bind( this )
 		);
+		var rootSvg = scaledContent.get( 0 );
+		if (
+			rootSvg &&
+			String( rootSvg.tagName ).toLowerCase() === 'svg'
+		) {
+			this.sliderViewMode = 'line';
+			this.hideLineHistoricalDataMessage();
+			this.syncMapLineRadiosFromSliderMode();
+		}
 		$( '.OWIDSliderSVGContainer' ).before( $backContainer );
 	}
 };
