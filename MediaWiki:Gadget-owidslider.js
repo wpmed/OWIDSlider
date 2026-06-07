@@ -1557,7 +1557,7 @@ OWIDSlider.Context.prototype = {
 		this.$countrySelect.after(this.$regionChartBtnContainer);
 
 		$lineOption.on('click', function() {
-			if (this.viewMode != "line") {
+			if (this.viewMode != "line" && this.regionsChartsUrls[ this.currentView ]) {
 				this.viewMode = "line";
 				this.loadRegionChart(this.currentView);
 			}
