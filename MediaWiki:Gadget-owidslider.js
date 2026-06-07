@@ -71,6 +71,8 @@ var OWIDSlider = {
 				OWIDSliderSelectRegion: 'Select region',
 				OWIDSliderPlayLabel: 'Show slideshow',
 				OWIDSliderShowRegionGraph: "Graph",
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Loading... $1%'
 			},
 			es: {
@@ -1287,6 +1289,7 @@ var OWIDSlider = {
 		viewMin
 	) {
 		OWIDSlider.doStats();
+		this.viewMode = "map";
 		this.svgUrls = urls;
 		this.countriesSvgUrls = countriesUrls;
 		this.countriesInfoUrls = countriesInfoUrls;
@@ -1454,6 +1457,7 @@ OWIDSlider.Context.prototype = {
 			.append( this.$credit );
 
 		var $select = '';
+		this.$header = $('<div>').attr('class', 'owid-header').css('display', 'none');
 		if ( Object.keys( this.imgs ).length >= 0 ) {
 			$select = $( '<select>' )
 				.attr( 'id', 'OWIDSliderViewSelector' )
@@ -1468,6 +1472,7 @@ OWIDSlider.Context.prototype = {
 			}
 			$select.change( function ( e ) {
 				that.currentView = e.target.value;
+				that.viewMode = "map";
 				that.total = Object.keys( that.imgs[ that.currentView ] ).length;
 				that.urlsLoaded = 0;
 				that.$loading = that.createLoader();
@@ -1481,10 +1486,11 @@ OWIDSlider.Context.prototype = {
 				.text( mw.msg( 'OWIDSliderSelectRegion' ) );
 			selectContainer.append( $select ).append( selectArrow ).append( selectLabel );
 			$select = selectContainer;
+			this.$header.append($select);
 		}
 
 		var $container = $( '<div class="OWIDSliderImgContainer"></div>' )
-			.append( $select );
+			.append( this.$header );
 		$container.append( $svgContainer )
 			.append( $creditDiv )
 			.append( this.$sliderContainer );
@@ -1524,27 +1530,53 @@ OWIDSlider.Context.prototype = {
 		}
 
 		this.$regionChartBtnContainer = null;
-		if (this.regionsChartsUrls != null && this.regionsChartsUrls[this.currentView]) {
-			this.$regionChartBtnContainer = $( '<div>' ).attr( 'class', 'owid-region-chart-container' );
-			var regionBtnLabel = mw.msg( 'OWIDSliderShowRegionGraph' );
-			var $regionBtn = $( '<button></button>' )
-				.attr( {
-					type: 'button',
-					class: 'OWIDSlider-country-back',
-					title: regionBtnLabel,
-					'aria-label': regionBtnLabel
-				} )
-				.text( regionBtnLabel );
-			$regionBtn.on(
-				'click',
-				function () {
-					this.loadRegionChart(this.currentView);
-					this.$regionChartBtnContainer.remove();
-				}.bind( this )
-			);
-			this.$regionChartBtnContainer.append($regionBtn);
-			this.$countrySelect.after(this.$regionChartBtnContainer);
-		}
+		var regionBtnLabelMap = mw.msg( 'OWIDSliderShowRegionMap' );
+		var $regionRadioBtnMap = $( '<input>' )
+			.attr( {
+				type: 'radio',
+				name: 'OWIDSliderViewMode',
+				id: 'owid-viewmode-map',
+				checked: this.viewMode == "map",
+		});
+		var $mapOption = $("<label></label>").attr( 'class', 'owid-viewmode-option' );
+		$mapOption.append($regionRadioBtnMap).append($("<span></span>").text(regionBtnLabelMap));
+
+		var regionBtnLabelLine = mw.msg( 'OWIDSliderShowRegionLine' );
+		var $regionRadioBtnLine = $( '<input>' )
+			.attr( {
+				type: 'radio',
+				name: 'OWIDSliderViewMode',
+				id: 'owid-viewmode-line',
+				checked: this.viewMode == "line",
+				disabled: !this.regionsChartsUrls[ this.currentView ]
+			});
+		var $lineOption = $("<label></label>").attr( 'class', 'owid-viewmode-option' );
+		$lineOption.append($regionRadioBtnLine).append($("<span></span>").text(regionBtnLabelLine));
+		this.$regionChartBtnContainer = $( '<div>' ).attr( 'class', 'owid-region-chart-container' );
+		this.$regionChartBtnContainer.append($mapOption).append($lineOption);
+		this.$countrySelect.after(this.$regionChartBtnContainer);
+
+		$lineOption.on('click', function() {
+			if (this.viewMode != "line") {
+				this.viewMode = "line";
+				this.loadRegionChart(this.currentView);
+			}
+		}.bind(this));
+		$mapOption.on("click", function() {
+			if (this.viewMode != "map") {
+				this.viewMode = "map";
+				this.$svgContainer.html( '' ).append( this.originalContainerContent );
+				this.$credit[ 0 ].href = this.infoUrls[ this.currentView ][ this.currentImage ];
+				setTimeout(
+					function () {
+						this.$countrySelect.css( 'display', 'inline-block' );
+						this.loadRegionChartSwitch();
+						this.initSVGControls();
+					}.bind( this ),
+					100
+				);
+			}
+		}.bind(this));
 	},
 	getMaxImgDim: function () {
 		// This assumes that even on high-DPI displays, enlarging to 96dpi is ok.
@@ -1646,6 +1678,15 @@ OWIDSlider.Context.prototype = {
 		this.setCurrentSvgImage( currentUrl, function () {
 			that.pendingFrame = false;
 		} );
+		// Update the header position
+		if (this.$header) {
+			var svgHeader = document.querySelector('.OWIDSliderSVGContainer svg #header');
+			if (svgHeader) {
+				var width = svgHeader.getBoundingClientRect().width;
+				this.svgWidth = width;
+				this.$header.css("display", "flex");
+			}
+		}
 	},
 	setSvg: function ( $svgEl ) {
 		if ( $svgEl[ 0 ] instanceof SVGSVGElement ) {
@@ -2620,7 +2661,6 @@ OWIDSlider.Context.prototype = {
 	},
 	paintCountryChart: function ( content ) {
 		this.originalContainerContent = this.$svgContainer.html();
-		this.$countrySelect.css( 'display', 'none' );
 		var scaledContent = this.getScaledSvg( content );
 
 		if ( scaledContent.length > 0 ) {
@@ -2683,37 +2723,39 @@ OWIDSlider.Context.prototype = {
 		} );
 		this.$svgContainer.html( '' ).append( scaledContent );
 
-		// Back content
-		var backLabel = mw.msg( 'OWIDSliderFrameBack' );
-		var $back = $( '<button></button>' )
-			.attr( {
-				type: 'button',
-				class: 'OWIDSlider-country-back',
-				title: backLabel,
-				'aria-label': backLabel
-			} )
-			.text( backLabel );
-		var $backContainer = $( '<div></div>' )
-			.attr( { class: 'OWIDSlider-country-back-container' } )
-			.append( $back );
-		$backContainer.css( 'margin-top', '10px' );
-		$back.on(
-			'click',
-			function () {
-				this.$svgContainer.html( '' ).append( this.originalContainerContent );
-				this.$credit[ 0 ].href = this.infoUrls[ this.currentView ][ this.currentImage ];
-				$backContainer.remove();
-				setTimeout(
-					function () {
-						this.$countrySelect.css( 'display', 'inline-block' );
-						this.loadRegionChartSwitch();
-						this.initSVGControls();
-					}.bind( this ),
-					100
-				);
-			}.bind( this )
-		);
-		$( '.OWIDSliderSVGContainer' ).before( $backContainer );
+		if (this.viewMode == "map") {
+			// Back content
+			var backLabel = mw.msg( 'OWIDSliderFrameBack' );
+			var $back = $( '<button></button>' )
+				.attr( {
+					type: 'button',
+					class: 'OWIDSlider-country-back',
+					title: backLabel,
+					'aria-label': backLabel
+				} )
+				.text( backLabel );
+			var $backContainer = $( '<div></div>' )
+				.attr( { class: 'OWIDSlider-country-back-container' } )
+				.append( $back );
+			$backContainer.css( 'margin-top', '10px' );
+			$back.on(
+				'click',
+				function () {
+					this.$svgContainer.html( '' ).append( this.originalContainerContent );
+					this.$credit[ 0 ].href = this.infoUrls[ this.currentView ][ this.currentImage ];
+					$backContainer.remove();
+					setTimeout(
+						function () {
+							this.$countrySelect.css( 'display', 'inline-block' );
+							this.loadRegionChartSwitch();
+							this.initSVGControls();
+						}.bind( this ),
+						100
+					);
+				}.bind( this )
+			);
+			$( '.OWIDSliderSVGContainer' ).before( $backContainer );
+		}
 	}
 };
 

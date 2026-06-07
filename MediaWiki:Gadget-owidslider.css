@@ -143,6 +143,7 @@
   /* position: absolute; */
   /* right: 5%; */
   font-size: 1.25em;
+  height: 50px;
 }
 
 .OWIDSlider-country-back {
@@ -162,10 +163,10 @@
 
 .owid-select-container {
   position: relative;
-  width: 250px;
   display: inline-block;
   margin-top: 20px;
   margin-bottom: 20px;
+  flex: 8;
 }
 
 .owid-select {
@@ -242,3 +243,43 @@
   height: 100%;
 }
 
+
+.OWIDSliderDialog .owid-header {
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.OWIDSliderDialog .owid-region-chart-container {
+  margin-right: 10px;
+  flex: 2;
+  height: 50px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20%;
+  border: 1px solid #c4c4c4;
+  border-radius: 4px;
+}
+
+.OWIDSliderDialog .owid-region-chart-container button {
+  height: 50px;
+}
+
+
+.OWIDSliderDialog .owid-region-chart-container label {
+  display: flex;
+  align-items: center;
+}
+
+.OWIDSliderDialog .owid-region-chart-container input {
+  display: inline-block;
+  margin-right: 10px;
+  width: 20px;
+  height: 200px;
+}
