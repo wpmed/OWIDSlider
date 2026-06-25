@@ -1328,7 +1328,7 @@ var OWIDSlider = {
 		this.currentView = config.startingView && imgs[config.startingView] ?
 			config.startingView :
 			Object.keys(imgs)[0];
-		this.language = config.language ? config.language.trim() : '';
+		this.language = config.language ? config.language.trim() : mw.config.get('wgUserLanguage') || mw.config.get('wgPageContentLanguage') || '';
 		this.total = Object.keys(imgs[this.currentView]).length;
 		// for (var i in imgs) {
 		//   this.total += Object.keys(imgs[i]).length;
