@@ -1,3 +1,8 @@
+
+/* eslint-disable no-useless-assignment */
+/* eslint-disable comma-dangle */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable indent */
 /*
  * OWID Slider — Our World In Data SVG Image Stack Viewer for Wikimedia
  *
@@ -8,8 +13,8 @@
  *
  * Canonical Repo: https://github.com/wpmed/OWIDSlider
  *
- * Authors: Hellerhoff, Bawolff,Hassan M. Amin
- * Contributors: Booksmurf
+ * Authors: Hellerhoff, Bawolff, Hassan M. Amin
+ * Contributors: Booksmurf, Nux, Doc James
  *
  * Notes:
  *   - This file expects to run in a MediaWiki-like environment or a test page
@@ -22,8 +27,7 @@
 
 // Add ESLint globals comment at the top of the file
 // This tells ESLint these variables are intentionally global and expected to be available at runtime.
-/* global mw, DOMPurify, $ */
-
+/* global OO, DOMPurify, $, jQuery, define */
 var OWIDSlider = {
 	// ---------------------------------------------------------------------
 	// OWIDSlider.I18n
@@ -32,6 +36,19 @@ var OWIDSlider = {
 	I18n: {
 		// Start translations. Add new languages under the appropriate language code.
 		messages: {
+			af: {
+				OWIDSliderFrameBack: 'Return to map',
+				OWIDSliderFrameBackDesktop: 'Return to article',
+				OWIDSliderFrameImageCredit: 'Media credits',
+				OWIDSliderFrameCopyLink: 'Copy Direct Link',
+				OWIDSliderSliderLabel: 'Select image',
+				OWIDSliderSelectRegion: 'Select region',
+				OWIDSliderPlayLabel: 'Show slideshow',
+				OWIDSliderShowRegionGraph: "Graph",
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
+				OWIDSliderLoading: 'Loading... $1%'
+			},
 			ar: {
 				OWIDSliderFrameBack: 'رجوع',
 				OWIDSliderFrameBackDesktop: 'العودة إلى المقالة',
@@ -153,6 +170,9 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: '画像を選択',
 				OWIDSliderSelectRegion: '地域を選択',
 				OWIDSliderPlayLabel: 'スライドショーを表示',
+				OWIDSliderShowRegionGraph: "グラフ",
+				OWIDSliderShowRegionMap: "マップ",
+				OWIDSliderShowRegionLine: "ライン",
 				OWIDSliderLoading: '読み込み中... $1%'
 			},
 			ko: {
@@ -927,7 +947,7 @@ var OWIDSlider = {
 			return;
 		}
 		var $viewer = OWIDSlider.getViewer();
-		backButtonTitle = mw.msg( 'OWIDSliderFrameBackDesktop' );
+		var backButtonTitle = mw.msg( 'OWIDSliderFrameBackDesktop' );
 
 		var config = {
 			size: 'full',
@@ -999,7 +1019,7 @@ var OWIDSlider = {
 				redirects: "1",
 			})
 			.then( function ( res ) {
-				console.log({res})
+				console.log({res});
 				if ( res.parse ) {
 					const text = res.parse.text[ '*' ];
 					resolve(text);
@@ -1066,7 +1086,7 @@ var OWIDSlider = {
 		var regionsChartsUrls = Object.create( null );
 		var regionsChartsInfoUrls = Object.create( null );
 		this.translatedCountryNames = Object.create( null );
-		for ( var galleryName in subIds ) {
+		for ( let galleryName in subIds ) {
 			var galleryId = subIds[ galleryName ];
 			var elm = listDoc.getElementById( galleryId );
 			try {
@@ -1083,8 +1103,8 @@ var OWIDSlider = {
 					years[ galleryName ] = JSON.parse( elm.dataset.owidsliderYear );
 				}
 			} catch(err) {
-				console.log("error parsing dataset content for gallery", galleryName, err)
-				continue
+				console.log("error parsing dataset content for gallery", galleryName, err);
+				continue;
 			}
 			if (
 				!( years[ galleryName ] instanceof Array ) ||
@@ -1097,7 +1117,7 @@ var OWIDSlider = {
 				'img.mw-file-element, span[typeof~="mw:Error"][typeof~="mw:File"]'
 			);
 			if ( galleryName === 'RegionsCharts' ) {
-				for ( var j = 0; j < imgs.length; j++ ) {
+				for ( let j = 0; j < imgs.length; j++ ) {
 					if ( imgs[ j ].nodeName !== 'IMG' ) {
 						continue;
 					}
@@ -1109,7 +1129,7 @@ var OWIDSlider = {
 					}
 				}
 			} else if ( galleryName === 'AllCountries' ) {
-				for ( var j = 0; j < imgs.length; j++ ) {
+				for ( let j = 0; j < imgs.length; j++ ) {
 					if ( imgs[ j ].nodeName !== 'IMG' ) {
 						continue;
 					}
@@ -1122,7 +1142,7 @@ var OWIDSlider = {
 				}
 			} else {
 				imgMap[ galleryName ] = [];
-				for ( var i = 0; i < imgs.length; i++ ) {
+				for ( let i = 0; i < imgs.length; i++ ) {
 					if (
 						typeof years[ galleryName ][ i ] !== 'number' || imgs[ i ].nodeName !== 'IMG'
 					) {
@@ -1178,7 +1198,7 @@ var OWIDSlider = {
 			return src;
 		}
 		var srcSets = imgElm.srcset.split( /\s*,\s*/ );
-		for ( var i = 0; i < srcSets.length; i++ ) {
+		for ( let i = 0; i < srcSets.length; i++ ) {
 			var parts = srcSets[ i ].match( /^(\S+)\s+([0-9.])x\s*$/ );
 			if ( parts && parts.length === 3 ) {
 				var pixelRatio = parseFloat( parts[ 2 ] );
@@ -1205,9 +1225,9 @@ var OWIDSlider = {
 	},
 	getImagesUrls: function ( imgs ) {
 		var urls = Object.create( null );
-		for ( var i in imgs ) {
+		for ( let i in imgs ) {
 			var region = [];
-			for ( var j in imgs[ i ] ) {
+			for ( let j in imgs[ i ] ) {
 				region[ j ] = {
 					url: this.convertThumbUrlToOriginal( imgs[ i ][ j ].getAttribute( 'src' ) )
 				};
@@ -1430,6 +1450,7 @@ OWIDSlider.Context.prototype = {
 			}
 			return false;
 		} );
+		let mouse_y;
 		$svgContainer.on( 'mousedown', function ( event ) {
 			// prepare scroll by drag
 			mouse_y = event.screenY; // remember mouse-position
@@ -1462,7 +1483,7 @@ OWIDSlider.Context.prototype = {
 			$select = $( '<select>' )
 				.attr( 'id', 'OWIDSliderViewSelector' )
 				.attr( 'class', 'owid-select' );
-			for ( var i in this.imgs ) {
+			for ( let i in this.imgs ) {
 				var optionName = i.replace(/([A-Z])/g, ' $1').trim();
 				$select.append(
 					$( '<option>' )
@@ -1764,7 +1785,7 @@ OWIDSlider.Context.prototype = {
 		// If the svg content has comment, it's treated as a separate node
 		// So we need to extract just the svg
 		if ( svgEl.length > 1 ) {
-		for ( var i = 0; i < svgEl.length; i++ ) {
+		for ( let i = 0; i < svgEl.length; i++ ) {
 		if ( svgEl[ i ].tagName === 'svg' ) {
 		svgEl = $( svgEl[ i ] );
 		break;
@@ -1780,7 +1801,7 @@ OWIDSlider.Context.prototype = {
 			svgEl.attr( 'height' ).match( /^\d+(px)?$/ )
 		) {
 			// If no viewbox but have width & height, make one so that we can properly resize image
-			svgEl.attr( 'viewBox', '0 0 ' + parseInt( svgEl.attr( 'width' ) ) + ' ' + parseInt( svgEl.attr( 'height' ) ) )
+			svgEl.attr( 'viewBox', '0 0 ' + parseInt( svgEl.attr( 'width' ) ) + ' ' + parseInt( svgEl.attr( 'height' ) ) );
 		}
 		svgEl.removeAttr( 'width' );
 		svgEl.removeAttr( 'height' );
@@ -2018,7 +2039,7 @@ OWIDSlider.Context.prototype = {
 			years.forEach( function ( yearEl ) {
 				var year = parseInt( yearEl.getAttribute( 'value' ) );
 			yearsObj[ year ] = Object.create( null );
-			for ( var i = 0; i < yearEl.children.length; i++ ) {
+			for ( let i = 0; i < yearEl.children.length; i++ ) {
 			var countryEl = yearEl.children[ i ];
 				yearsObj[ year ][ countryEl.getAttribute( 'name' ).replace( /\s/g, '-' ) ] = countryEl.getAttribute( 'fill' );
 			}
@@ -2072,7 +2093,7 @@ OWIDSlider.Context.prototype = {
 			that.removeLoadingState();
 	} else {
 			// TODO: Ask user to import or fallback to prev flow
-			for ( var i = that.min; i <= that.max; i++ ) {
+			for ( let i = that.min; i <= that.max; i++ ) {
 				var svgUrl = that.svgUrls[ that.currentView ][ i ];
 				if ( svgUrl ) {
 					svgUrl = svgUrl.url;
@@ -2107,7 +2128,7 @@ OWIDSlider.Context.prototype = {
 				} )
 				.catch( function ( err ) {
 					that.onUrlLoaded();
-					console.log( 'Error loading svg data', svgUrl, gallery, i, err );
+					console.log( 'Error loading svg data', svgUrl, err );
 					resolve( false );
 				} );
 		} );
@@ -2117,7 +2138,7 @@ OWIDSlider.Context.prototype = {
 
 		var chunk_size = 2;
 		var accumulator = [];
-		for ( var i = 0; i < arr.length; i++ ) {
+		for ( let i = 0; i < arr.length; i++ ) {
 			if ( accumulator.length >= chunk_size ) {
 				chunks.push( accumulator );
 				accumulator = [];
@@ -2136,7 +2157,7 @@ OWIDSlider.Context.prototype = {
 						return resolve( p );
 					}
 					var funcArray = [];
-					for ( var i = 0; i < v.length; i++ ) {
+					for ( let i = 0; i < v.length; i++ ) {
 						funcArray.push(
 							( function ( url ) {
 								return fn( url ).then( function ( r ) {
@@ -2156,10 +2177,10 @@ OWIDSlider.Context.prototype = {
 	getUrls: function () {
 		this.urls = Object.create( null );
 		this.infoUrls = Object.create( null );
-		for ( var gallery in this.imgs ) {
+		for ( let gallery in this.imgs ) {
 			this.urls[ gallery ] = [];
 			this.infoUrls[ gallery ] = [];
-			for ( var i = this.min; i <= this.max; i++ ) {
+			for ( let i = this.min; i <= this.max; i++ ) {
 				if ( !this.imgs[ gallery ][ i ] ) {
 					continue;
 				}
@@ -2197,19 +2218,19 @@ OWIDSlider.Context.prototype = {
 	},
 
 	handleTouchStart: function ( e ) {
-		for ( var i = 0; i < e.changedTouches.length; i++ ) {
+		for ( let i = 0; i < e.changedTouches.length; i++ ) {
 			var t = e.changedTouches[ i ];
 			this.pendingTouches[ t.identifier ] = [ t.clientX, t.clientY ];
 		}
 	},
 	handleTouchCancel: function ( e ) {
-		for ( var i = 0; i < e.changedTouches.length; i++ ) {
+		for ( let i = 0; i < e.changedTouches.length; i++ ) {
 			var t = e.changedTouches[ i ];
 			delete this.pendingTouches[ t.identifier ];
 		}
 	},
 	handleTouchMove: function ( e ) {
-		for ( var i = 0; i < e.changedTouches.length; i++ ) {
+		for ( let i = 0; i < e.changedTouches.length; i++ ) {
 			var t = e.changedTouches[ i ];
 			if ( !this.pendingTouches[ t.identifier ] ) {
 				continue;
@@ -2243,7 +2264,7 @@ OWIDSlider.Context.prototype = {
 		}
 	},
 	handleTouchEnd: function ( e ) {
-		for ( var i = 0; i < e.changedTouches.length; i++ ) {
+		for ( let i = 0; i < e.changedTouches.length; i++ ) {
 			var t = e.changedTouches[ i ];
 			if ( !this.pendingTouches[ t.identifier ] ) {
 				continue;
@@ -2371,7 +2392,7 @@ OWIDSlider.Context.prototype = {
 		' g#countries-with-data path,g#countries-without-data path'
 		);
 
-		for ( var i = 0; i < allCountries.length; i++ ) {
+		for ( let i = 0; i < allCountries.length; i++ ) {
 			allCountries[ i ].onmouseenter = this.onCountryHover.bind( this );
 			allCountries[ i ].onmouseleave = this.onCountryHoverLeave.bind( this );
 			allCountries[ i ].style.cursor = 'pointer';
@@ -2434,7 +2455,7 @@ OWIDSlider.Context.prototype = {
 			var fill = e.target.getAttribute( 'fill' );
 			var elementsSelector = this.CONTAINER_SELECTOR + ' ' + this.MAP_SELECTOR + " path[fill]:not([fill='" + fill + "'])";
 			var elements = document.querySelectorAll( elementsSelector );
-			for ( var i = 0; i < elements.length; i++ ) {
+			for ( let i = 0; i < elements.length; i++ ) {
 		if ( elements[ i ].parentElement && elements[ i ].parentElement.id === 'swatches' ) {
 		continue;
 		}
@@ -2443,9 +2464,9 @@ OWIDSlider.Context.prototype = {
 			var targetElements = document.querySelectorAll(
 				this.CONTAINER_SELECTOR + ' ' + this.MAP_SELECTOR + " path[fill='" + fill + "']"
 			);
-			for ( var i = 0; i < targetElements.length; i++ ) {
-				id = targetElements[ i ].getAttribute( 'id' );
-				strokeWidth = targetElements[ i ].getAttribute( 'stroke-width' );
+			for ( let i = 0; i < targetElements.length; i++ ) {
+				let id = targetElements[ i ].getAttribute( 'id' );
+				let strokeWidth = targetElements[ i ].getAttribute( 'stroke-width' );
 				swatchsStrokeWidth[ id ] = strokeWidth;
 				targetElements[ i ].setAttribute(
 					'stroke-width',
@@ -2464,18 +2485,18 @@ OWIDSlider.Context.prototype = {
 			var elements = document.querySelectorAll(
 				this.CONTAINER_SELECTOR + ' ' + this.MAP_SELECTOR + " path[fill]:not([fill='" + fill + "'])"
 			);
-			for ( var i = 0; i < elements.length; i++ ) {
+			for ( let i = 0; i < elements.length; i++ ) {
 				elements[ i ].setAttribute( 'fill-opacity', '1' );
-				id = elements[ i ].getAttribute( 'id' );
-				strokeWidth = swatchsStrokeWidth[ id ] || this.DEFAULT_STROKE_WIDTH;
+				let id = elements[ i ].getAttribute( 'id' );
+				let strokeWidth = swatchsStrokeWidth[ id ] || this.DEFAULT_STROKE_WIDTH;
 				elements[ i ].setAttribute( 'stroke-width', strokeWidth );
 			}
 			var targetElements = document.querySelectorAll(
 				this.CONTAINER_SELECTOR + ' ' + this.MAP_SELECTOR + " path[fill='" + fill + "']"
 			);
-			for ( var i = 0; i < targetElements.length; i++ ) {
-				id = targetElements[ i ].getAttribute( 'id' );
-				strokeWidth = swatchsStrokeWidth[ id ] || this.DEFAULT_STROKE_WIDTH;
+			for ( let i = 0; i < targetElements.length; i++ ) {
+				let id = targetElements[ i ].getAttribute( 'id' );
+				let strokeWidth = swatchsStrokeWidth[ id ] || this.DEFAULT_STROKE_WIDTH;
 				targetElements[ i ].setAttribute( 'stroke-width', strokeWidth );
 			}
 			e.target.setAttribute( 'stroke-width', this.DEFAULT_STROKE_WIDTH );
@@ -2484,7 +2505,7 @@ OWIDSlider.Context.prototype = {
 		var swatches = document.querySelectorAll(
 			this.CONTAINER_SELECTOR + ' #swatches > *'
 		);
-		for ( var i = 0; i < swatches.length; i++ ) {
+		for ( let i = 0; i < swatches.length; i++ ) {
 			var fill = swatches[ i ].getAttribute( 'fill' );
 			if ( !fill || ( fill.indexOf( '#' ) !== 0 && fill.indexOf( 'rgb' ) !== 0 ) ) {
 				continue;
@@ -2791,7 +2812,7 @@ OWIDSlider.Context.prototype = {
 		lowestDelta;
 
 	if ( $.event.fixHooks ) {
-		for ( var i = toFix.length; i; ) {
+		for ( let i = toFix.length; i; ) {
 			$.event.fixHooks[ toFix[ --i ] ] = $.event.mouseHooks;
 		}
 	}
@@ -2801,7 +2822,7 @@ OWIDSlider.Context.prototype = {
 
 		setup: function () {
 			if ( this.addEventListener ) {
-				for ( var i = toBind.length; i; ) {
+				for ( let i = toBind.length; i; ) {
 					this.addEventListener( toBind[ --i ], handler, false );
 				}
 			} else {
@@ -2814,7 +2835,7 @@ OWIDSlider.Context.prototype = {
 
 		teardown: function () {
 			if ( this.removeEventListener ) {
-				for ( var i = toBind.length; i; ) {
+				for ( let i = toBind.length; i; ) {
 					this.removeEventListener( toBind[ --i ], handler, false );
 				}
 			} else {
