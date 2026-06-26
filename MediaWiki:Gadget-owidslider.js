@@ -1067,12 +1067,13 @@ var OWIDSlider = {
 			console.log('Error finding element in list document', idSelector, listElm);
 			return;
 		}
-
 		var subIds = JSON.parse(listElm.dataset.owidSubids);
 		if (!subIds || typeof subIds !== 'object') {
 			console.log('invalid owidsubids');
 			return;
 		}
+
+		var subIdsSorted = listElm.dataset.owidSubidsSorted ? JSON.parse(listElm.dataset.owidSubidsSorted) : [];
 
 		var years = Object.create(null),
 			imgMap = Object.create(null);
@@ -1170,6 +1171,7 @@ var OWIDSlider = {
 			$viewer,
 			data,
 			imgMap,
+			subIdsSorted,
 			urls,
 			countriesUrls,
 			countriesInfoUrls,
@@ -1297,6 +1299,7 @@ var OWIDSlider = {
 		$viewer,
 		config,
 		imgs,
+		subIdsSorted,
 		urls,
 		countriesUrls,
 		countriesInfoUrls,
@@ -1316,6 +1319,7 @@ var OWIDSlider = {
 		this.regionsChartsUrls = regionsChartsUrls;
 		this.regionsChartsInfoUrls = regionsChartsInfoUrls;
 		this.translatedCountryNames = Object.create(null);
+		this.subIdsSorted = subIdsSorted;
 		this.$viewer = $viewer;
 		this.loop = !!config.loop;
 		this.start = typeof config.start === 'number' ? config.start : 0;
@@ -1326,8 +1330,12 @@ var OWIDSlider = {
 		this.max = max;
 		this.viewMin = viewMin; // The view that has the min element
 		this.currentView = config.startingView && imgs[config.startingView] ?
-			config.startingView :
-			Object.keys(imgs)[0];
+			config.startingView : '';
+		if (!this.currentView && subIdsSorted && subIdsSorted.length > 0 && imgs[subIdsSorted[0]]) {
+			this.currentView = subIdsSorted[0];
+		} else {
+			this.currentView = Object.keys(imgs)[0];
+		}
 		this.language = config.language ? config.language.trim() : mw.config.get('wgUserLanguage') || mw.config.get('wgPageContentLanguage') || '';
 		this.total = Object.keys(imgs[this.currentView]).length;
 		// for (var i in imgs) {

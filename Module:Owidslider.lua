@@ -152,6 +152,7 @@ function p.srcs( frame )
 		galleryArgs[j] = args[j]
 	end
 	local subItems = {}
+	local subItemsSorted = {}
 	local output = ''
 	local translations = {
 		Africa = "Q15",
@@ -187,6 +188,7 @@ function p.srcs( frame )
 			local rawGalleryName = string.sub( argName, 9 )
 			local galleryName = translateGalleryName( rawGalleryName, translations )
 			subItems[galleryName] = mw.uri.anchorEncode( "gallery-" .. galleryName )
+			table.insert( subItemsSorted, galleryName )
 			local srcGalleryOutput = srcGallery( frame, galleryName, argValue, galleryArgs )
 			output = output .. srcGalleryOutput
 		end
@@ -195,9 +197,9 @@ function p.srcs( frame )
 		:attr( 'class', 'owidsrclist' )
 		:attr( 'id', args.id )
 		:attr( 'data-owid-subids', mw.text.jsonEncode( subItems ) )
+		:attr( 'data-owid-subids-sorted', mw.text.jsonEncode( subItemsSorted ))
 		:wikitext( output )
 end
-
 
 function p.gallery( frame )
 	-- Seems like math.random is always seeded with 0 :(
