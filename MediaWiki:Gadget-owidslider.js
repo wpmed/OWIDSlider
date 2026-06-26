@@ -1036,16 +1036,7 @@ var OWIDSlider = {
 			console.log('Image stack error, invalid page ' + data.list);
 			return;
 		}
-		if (data.location && data.location.toLowerCase() === 'commons') {
-			// var templateName = page.title; /* eslint no-unused var*/
-			this.loadCommonsTemmplate(data.list, data.language)
-				.then(function (text) {
-					return OWIDSlider.handlePage($viewer, data, text);
-				})
-				.catch(function (err) {
-					console.log("Error loading list: ", err);
-				});
-		} else {
+		if (data.location && data.location.toLowerCase() === 'local') {
 			url = page.getUrl();
 			fetch(url)
 				.then(function (response) {
@@ -1053,6 +1044,15 @@ var OWIDSlider = {
 				})
 				.then(function (text) {
 					return OWIDSlider.handlePage($viewer, data, text);
+				});
+		} else {
+			// var templateName = page.title; /* eslint no-unused var*/
+			this.loadCommonsTemmplate(data.list, data.language)
+				.then(function (text) {
+					return OWIDSlider.handlePage($viewer, data, text);
+				})
+				.catch(function (err) {
+					console.log("Error loading list: ", err);
 				});
 		}
 	},
