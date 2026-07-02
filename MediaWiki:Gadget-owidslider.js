@@ -1333,7 +1333,7 @@ var OWIDSlider = {
 			config.startingView : '';
 		if (!this.currentView && subIdsSorted && subIdsSorted.length > 0 && imgs[subIdsSorted[0]]) {
 			this.currentView = subIdsSorted[0];
-		} else {
+		} else if (!this.currentView) {
 			this.currentView = Object.keys(imgs)[0];
 		}
 		this.language = config.language ? config.language.trim() : mw.config.get('wgUserLanguage') || mw.config.get('wgPageContentLanguage') || '';
