@@ -15,7 +15,8 @@
 }
 
 .OWIDSliderSVGContainer {
-  height: 100%; /* js sets an aspect-ratio which makes this work */
+  height: 100%;
+  /* js sets an aspect-ratio which makes this work */
   max-width: 100%;
 }
 
@@ -44,6 +45,7 @@
 .OWIDSlider-play .circle {
   fill: rgba(128, 128, 128, 0.9)
 }
+
 .OWIDSlider-play .triangle {
   fill: white
 }
@@ -51,6 +53,7 @@
 .OWIDSlider-play:hover .circle {
   fill: rgba(169, 169, 169, 0.9);
 }
+
 .OWIDSlider-play:hover .triangle {
   fill: black;
 }
@@ -105,9 +108,15 @@
     margin-left: 0.5em;
     margin-right: 0.5em;
   }
+
   .OWIDSliderSVGContainer {
-	position: relative;
-	z-index: 2;
+    position: relative;
+    z-index: 2;
+  }
+
+  .owid-header .owid-select-container {
+    flex: 100%;
+    margin-bottom: 0;
   }
 }
 
@@ -199,7 +208,7 @@
   position: absolute;
   left: 8px;
   top: 16px;
-  color: #1976d2 ;
+  color: #1976d2;
   padding: 0 4px;
   font-size: 16px;
   line-height: 1;
