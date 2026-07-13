@@ -975,11 +975,21 @@ var OWIDSlider = {
 		// copied from OO.ui.alert definition.
 
 		var win = OO.ui.getWindowManager().openWindow('OWIDSlider', config);
+		var hanldePopstateChange = function () {
+			var newUrl = new URL(window.location.href);
+			if (!newUrl.searchParams.get("owid_list")) {
+				// Back browser button was clicked, close the popup
+				OO.ui.getWindowManager().closeWindow('OWIDSlider');
+			}
+		}
+		window.addEventListener('popstate', hanldePopstateChange);
+
 		win.closing.done(function () {
 			var newUrl = new URL(window.location.href);
 			newUrl.searchParams.delete('owid_list');
 			newUrl.searchParams.delete('owid_language');
 
+			window.removeEventListener("popstate", hanldePopstateChange);
 			window.history.pushState({}, '', newUrl);
 		});
 		win.closed.done(function () {
@@ -1019,7 +1029,6 @@ var OWIDSlider = {
 				redirects: "1",
 			})
 				.then(function (res) {
-					console.log({ res });
 					if (res.parse) {
 						const text = res.parse.text['*'];
 						resolve(text);
