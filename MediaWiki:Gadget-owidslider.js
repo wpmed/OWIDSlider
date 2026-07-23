@@ -69,6 +69,19 @@ var OWIDSlider = {
 				OWIDSliderPlayLabel: 'Zobrazit prezentaci',
 				OWIDSliderLoading: 'Načítání... $1%'
 			},
+			dag: {
+				OWIDSliderFrameBack: 'Labimi tingbani yaɣa buɣisirili ni',
+				OWIDSliderFrameBackDesktop: 'Labimi satarili ni',
+				OWIDSliderFrameImageCredit: 'Lahabaya soya dariza tibo',
+				OWIDSliderFrameCopyLink: 'Yaami so daa',
+				OWIDSliderSliderLabel: 'Piimi anfooni',
+				OWIDSliderSelectRegion: 'Piimi yaɣili',
+				OWIDSliderPlayLabel: 'anfoonisinii',
+				OWIDSliderShowRegionGraph: "Saniɣa zahindigu",
+				OWIDSliderShowRegionMap: "tingbani yaɣa buɣisirili ",
+				OWIDSliderShowRegionLine: "kulugu",
+				OWIDSliderLoading: 'kpɛhibu... $1%'
+			},			
 			de: {
 				OWIDSliderFrameBack: 'Zurück',
 				OWIDSliderFrameBackDesktop: 'Zurück zum Artikel',
@@ -132,6 +145,16 @@ var OWIDSlider = {
 				OWIDSliderPlayLabel: 'Afficher le diaporama',
 				OWIDSliderLoading: 'Chargement... $1%'
 			},
+			hi: {
+				OWIDSliderFrameBack: 'वापस',
+				OWIDSliderFrameBackDesktop: 'लेख पर वापस जाएं',
+				OWIDSliderFrameImageCredit: 'मीडिया क्रेडिट',
+				OWIDSliderFrameCopyLink: 'प्रत्यक्ष लिंक कॉपी करें',
+				OWIDSliderSliderLabel: 'छवि चुनें',
+				OWIDSliderSelectRegion: 'क्षेत्र चुनें',
+				OWIDSliderPlayLabel: 'स्लाइडशो दिखाएं',
+				OWIDSliderLoading: 'लोड हो रहा है... $1%'
+			},			
 			id: {
 				OWIDSliderFrameBack: 'Kembali',
 				OWIDSliderFrameBackDesktop: 'Kembali ke artikel',
@@ -151,16 +174,6 @@ var OWIDSlider = {
 				OWIDSliderSelectRegion: 'Seleziona regione',
 				OWIDSliderPlayLabel: 'Mostra presentazione',
 				OWIDSliderLoading: 'Caricamento... $1%'
-			},
-			in: {
-				OWIDSliderFrameBack: 'वापस',
-				OWIDSliderFrameBackDesktop: 'लेख पर वापस जाएं',
-				OWIDSliderFrameImageCredit: 'मीडिया क्रेडिट',
-				OWIDSliderFrameCopyLink: 'प्रत्यक्ष लिंक कॉपी करें',
-				OWIDSliderSliderLabel: 'छवि चुनें',
-				OWIDSliderSelectRegion: 'क्षेत्र चुनें',
-				OWIDSliderPlayLabel: 'स्लाइडशो दिखाएं',
-				OWIDSliderLoading: 'लोड हो रहा है... $1%'
 			},
 			ja: {
 				OWIDSliderFrameBack: '戻る',
