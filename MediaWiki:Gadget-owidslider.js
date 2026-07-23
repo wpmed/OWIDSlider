@@ -81,7 +81,7 @@ var OWIDSlider = {
 				OWIDSliderShowRegionMap: "tingbani yaɣa buɣisirili ",
 				OWIDSliderShowRegionLine: "kulugu",
 				OWIDSliderLoading: 'kpɛhibu... $1%'
-			},			
+			},
 			de: {
 				OWIDSliderFrameBack: 'Zurück',
 				OWIDSliderFrameBackDesktop: 'Zurück zum Artikel',
@@ -154,7 +154,7 @@ var OWIDSlider = {
 				OWIDSliderSelectRegion: 'क्षेत्र चुनें',
 				OWIDSliderPlayLabel: 'स्लाइडशो दिखाएं',
 				OWIDSliderLoading: 'लोड हो रहा है... $1%'
-			},			
+			},
 			id: {
 				OWIDSliderFrameBack: 'Kembali',
 				OWIDSliderFrameBackDesktop: 'Kembali ke artikel',
@@ -2044,6 +2044,9 @@ OWIDSlider.Context.prototype = {
 		if (!this.svgYears) {
 			this.svgYears = Object.create(null);
 		}
+		if (!this.svgYearsActual) {
+			this.svgYearsActual = Object.create(null);
+		}
 
 		var svgs = [];
 		var viewSvgs = this.svgUrls[this.currentView];
@@ -2066,12 +2069,18 @@ OWIDSlider.Context.prototype = {
 				svgDoc = parser.parseFromString(svgData, 'image/svg+xml');
 				if (years.length > 0) {
 					var yearsObj = Object.create(null);
+					var yearsObjActual = Object.create(null);
 					years.forEach(function (yearEl) {
 						var year = parseInt(yearEl.getAttribute('value'));
 						yearsObj[year] = Object.create(null);
+						yearsObjActual[year] = Object.create(null);
 						for (let i = 0; i < yearEl.children.length; i++) {
 							var countryEl = yearEl.children[i];
-							yearsObj[year][countryEl.getAttribute('name').replace(/\s/g, '-')] = countryEl.getAttribute('fill');
+							var name = countryEl.getAttribute('name').replace(/\s/g, '-')
+							yearsObj[year][name] = countryEl.getAttribute('fill');
+							if (countryEl.getAttribute("actual")) {
+								yearsObjActual[year][name] = countryEl.getAttribute('actual');
+							}
 						}
 					});
 					that.firstSVGData = svgData;
@@ -2119,6 +2128,7 @@ OWIDSlider.Context.prototype = {
 					var serializer = new XMLSerializer();
 					that.firstSVGData = serializer.serializeToString(svgDoc);
 					that.svgYears[that.currentView] = yearsObj;
+					that.svgYearsActual[that.currentView] = yearsObjActual;
 					that.toggleImg();
 					that.removeLoadingState();
 				} else {
@@ -2444,7 +2454,11 @@ OWIDSlider.Context.prototype = {
 			countryPopup.style.boxShadow = '2px 2px 2px 1px #888888';
 			countryPopup.style.padding = '5px';
 			var span = document.createElement('span');
-			span.textContent = config.name;
+			var countryName = config.name;
+			if (config.actualYear) {
+				countryName = countryName + " (" + config.actualYear + ")";
+			}
+			span.textContent = countryName;
 			countryPopup.appendChild(span);
 			countryPopup.id = config.id;
 			return countryPopup;
@@ -2458,12 +2472,17 @@ OWIDSlider.Context.prototype = {
 		if (this.translatedCountryNames[formattedName]) {
 			name = this.translatedCountryNames[formattedName];
 		}
-		var countryPopup = createCountryPopup({
+		var countryPopupConfig = {
 			id: this.getOverlayHanlderId(id),
 			name: name,
 			left: parseInt(e.clientX) + 15 + 'px',
 			top: parseInt(e.clientY) + 15 + 'px'
-		});
+		};
+		if (this.svgYearsActual[this.currentView] && this.svgYearsActual[this.currentView][this.currentImage] && this.svgYearsActual[this.currentView][this.currentImage][name]) {
+			countryPopupConfig.actualYear = this.svgYearsActual[this.currentView][this.currentImage][id];
+		}
+
+		var countryPopup = createCountryPopup(countryPopupConfig);
 		document.querySelector(this.CONTAINER_SELECTOR).appendChild(countryPopup);
 	},
 	onCountryHoverLeave: function (e) {
