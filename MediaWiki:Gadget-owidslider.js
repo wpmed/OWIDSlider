@@ -50,14 +50,17 @@ var OWIDSlider = {
 				OWIDSliderLoading: 'Loading... $1%'
 			},
 			ar: {
-				OWIDSliderFrameBack: 'رجوع',
-				OWIDSliderFrameBackDesktop: 'العودة إلى المقالة',
-				OWIDSliderFrameImageCredit: 'حقوق الوسائط',
-				OWIDSliderFrameCopyLink: 'نسخ الرابط المباشر',
-				OWIDSliderSliderLabel: 'اختر الصورة',
-				OWIDSliderSelectRegion: 'اختر المنطقة',
-				OWIDSliderPlayLabel: 'عرض عرض الشرائح',
-				OWIDSliderLoading: 'جارٍ التحميل... $1%'
+			    OWIDSliderFrameBack: 'الرجوع إلى الخريطة',
+			    OWIDSliderFrameBackDesktop: 'الرجوع إلى المقالة',
+			    OWIDSliderFrameImageCredit: 'نسب الوسائط',
+			    OWIDSliderFrameCopyLink: 'نسخ الرابط المباشر',
+			    OWIDSliderSliderLabel: 'اختر صورة',
+			    OWIDSliderSelectRegion: 'اختر المنطقة',
+			    OWIDSliderPlayLabel: 'عرض العرض التقديمي',
+			    OWIDSliderShowRegionGraph: "رسم بياني",
+			    OWIDSliderShowRegionMap: "خريطة",
+			    OWIDSliderShowRegionLine: "مخطط خطي",
+			    OWIDSliderLoading: 'جاري التحميل... $1%'
 			},
 			cz: {
 				OWIDSliderFrameBack: 'Zpět',
