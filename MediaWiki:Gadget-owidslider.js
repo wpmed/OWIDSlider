@@ -1241,6 +1241,10 @@ var OWIDSlider = {
 		return src;
 	},
 	convertThumbUrlToOriginal: function (thumbUrl) {
+		thumbUrl = thumbUrl.replace(
+			/^(https?:)?\/\/thumb\.wikimedia\.org\//,
+			'$1//upload.wikimedia.org/'
+		);
 		var urlParts = thumbUrl.split('/');
 		var fileName = urlParts.filter(function (a) {
 			return a && a.includes('.svg');
