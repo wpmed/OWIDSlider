@@ -37,27 +37,30 @@ var OWIDSlider = {
 		// Start translations. Add new languages under the appropriate language code.
 		messages: {
 			af: {
-				OWIDSliderFrameBack: 'Return to map',
-				OWIDSliderFrameBackDesktop: 'Return to article',
-				OWIDSliderFrameImageCredit: 'Media credits',
-				OWIDSliderFrameCopyLink: 'Copy Direct Link',
-				OWIDSliderSliderLabel: 'Select image',
-				OWIDSliderSelectRegion: 'Select region',
-				OWIDSliderPlayLabel: 'Show slideshow',
-				OWIDSliderShowRegionGraph: "Graph",
-				OWIDSliderShowRegionMap: "Map",
-				OWIDSliderShowRegionLine: "Line",
-				OWIDSliderLoading: 'Loading... $1%'
+				OWIDSliderFrameBack: 'Keer terug na kaart',
+				OWIDSliderFrameBackDesktop: 'Keer terug na artikel',
+				OWIDSliderFrameImageCredit: 'Mediakrediete', 
+				OWIDSliderFrameCopyLink: 'Kopieer direkte skakel',
+				OWIDSliderSliderLabel: 'Kies beeld', 
+				OWIDSliderSelectRegion: 'Kies streek', 
+				OWIDSliderPlayLabel: 'Toon skyfievertoning', 
+				OWIDSliderShowRegionGraph: "Grafiek", 
+				OWIDSliderShowRegionMap: "Kaart",
+				OWIDSliderShowRegionLine: "Lyn",
+				OWIDSliderLoading: 'Laai... $1%'
 			},
 			ar: {
-				OWIDSliderFrameBack: 'رجوع',
-				OWIDSliderFrameBackDesktop: 'العودة إلى المقالة',
-				OWIDSliderFrameImageCredit: 'حقوق الوسائط',
-				OWIDSliderFrameCopyLink: 'نسخ الرابط المباشر',
-				OWIDSliderSliderLabel: 'اختر الصورة',
-				OWIDSliderSelectRegion: 'اختر المنطقة',
-				OWIDSliderPlayLabel: 'عرض عرض الشرائح',
-				OWIDSliderLoading: 'جارٍ التحميل... $1%'
+			    OWIDSliderFrameBack: 'الرجوع إلى الخريطة',
+			    OWIDSliderFrameBackDesktop: 'الرجوع إلى المقالة',
+			    OWIDSliderFrameImageCredit: 'نسب الوسائط',
+			    OWIDSliderFrameCopyLink: 'نسخ الرابط المباشر',
+			    OWIDSliderSliderLabel: 'اختر صورة',
+			    OWIDSliderSelectRegion: 'اختر المنطقة',
+			    OWIDSliderPlayLabel: 'عرض العرض التقديمي',
+			    OWIDSliderShowRegionGraph: "رسم بياني",
+			    OWIDSliderShowRegionMap: "خريطة",
+			    OWIDSliderShowRegionLine: "مخطط خطي",
+			    OWIDSliderLoading: 'جاري التحميل... $1%'
 			},
 			cz: {
 				OWIDSliderFrameBack: 'Zpět',
