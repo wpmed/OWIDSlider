@@ -39,28 +39,28 @@ var OWIDSlider = {
 			af: {
 				OWIDSliderFrameBack: 'Keer terug na kaart',
 				OWIDSliderFrameBackDesktop: 'Keer terug na artikel',
-				OWIDSliderFrameImageCredit: 'Mediakrediete', 
+				OWIDSliderFrameImageCredit: 'Mediakrediete',
 				OWIDSliderFrameCopyLink: 'Kopieer direkte skakel',
-				OWIDSliderSliderLabel: 'Kies beeld', 
-				OWIDSliderSelectRegion: 'Kies streek', 
-				OWIDSliderPlayLabel: 'Toon skyfievertoning', 
-				OWIDSliderShowRegionGraph: "Grafiek", 
+				OWIDSliderSliderLabel: 'Kies beeld',
+				OWIDSliderSelectRegion: 'Kies streek',
+				OWIDSliderPlayLabel: 'Toon skyfievertoning',
+				OWIDSliderShowRegionGraph: "Grafiek",
 				OWIDSliderShowRegionMap: "Kaart",
 				OWIDSliderShowRegionLine: "Lyn",
 				OWIDSliderLoading: 'Laai... $1%'
 			},
 			ar: {
-			    OWIDSliderFrameBack: 'الرجوع إلى الخريطة',
-			    OWIDSliderFrameBackDesktop: 'الرجوع إلى المقالة',
-			    OWIDSliderFrameImageCredit: 'نسب الوسائط',
-			    OWIDSliderFrameCopyLink: 'نسخ الرابط المباشر',
-			    OWIDSliderSliderLabel: 'اختر صورة',
-			    OWIDSliderSelectRegion: 'اختر المنطقة',
-			    OWIDSliderPlayLabel: 'عرض العرض التقديمي',
-			    OWIDSliderShowRegionGraph: "رسم بياني",
-			    OWIDSliderShowRegionMap: "خريطة",
-			    OWIDSliderShowRegionLine: "مخطط خطي",
-			    OWIDSliderLoading: 'جاري التحميل... $1%'
+				OWIDSliderFrameBack: 'الرجوع إلى الخريطة',
+				OWIDSliderFrameBackDesktop: 'الرجوع إلى المقالة',
+				OWIDSliderFrameImageCredit: 'نسب الوسائط',
+				OWIDSliderFrameCopyLink: 'نسخ الرابط المباشر',
+				OWIDSliderSliderLabel: 'اختر صورة',
+				OWIDSliderSelectRegion: 'اختر المنطقة',
+				OWIDSliderPlayLabel: 'عرض العرض التقديمي',
+				OWIDSliderShowRegionGraph: "رسم بياني",
+				OWIDSliderShowRegionMap: "خريطة",
+				OWIDSliderShowRegionLine: "مخطط خطي",
+				OWIDSliderLoading: 'جاري التحميل... $1%'
 			},
 			cz: {
 				OWIDSliderFrameBack: 'Zpět',
@@ -1544,7 +1544,8 @@ OWIDSlider.Context.prototype = {
 				.text(mw.msg('OWIDSliderSelectRegion'));
 			selectContainer.append($select).append(selectArrow).append(selectLabel);
 			$select = selectContainer;
-			this.$header.append($select);
+			this.$regionControls = $('<div>').attr('class', 'owid-region-controls').append($select);
+			this.$header.append(this.$regionControls);
 		}
 
 		var $container = $('<div class="OWIDSliderImgContainer"></div>')
@@ -1612,7 +1613,7 @@ OWIDSlider.Context.prototype = {
 		$lineOption.append($regionRadioBtnLine).append($("<span></span>").text(regionBtnLabelLine));
 		this.$regionChartBtnContainer = $('<div>').attr('class', 'owid-region-chart-container');
 		this.$regionChartBtnContainer.append($mapOption).append($lineOption);
-		this.$countrySelect.after(this.$regionChartBtnContainer);
+		this.$header.append(this.$regionChartBtnContainer);
 
 		$lineOption.on('click', function () {
 			if (this.viewMode != "line" && this.regionsChartsUrls[this.currentView]) {
@@ -1872,6 +1873,10 @@ OWIDSlider.Context.prototype = {
 		return $icon;
 	},
 	attachDetailsToInfoIcon: function (svgEl) {
+		if (this.$infoIcon) {
+			this.$infoIcon.remove();
+			this.$infoIcon = null;
+		}
 		var footer = svgEl.find('#footer');
 		var separator = svgEl.find('#separator-line');
 		var details = svgEl.find('#details');
@@ -1893,11 +1898,16 @@ OWIDSlider.Context.prototype = {
 		}
 		var header = svgEl.find('#header');
 		var isMobile = window.outerWidth < 600;
-		if (header.length && detailsArr) {
-			header = header.first();
-			// var that = this; /* eslint no-unused var*/
+		if (header.length && detailsArr && detailsArr.length) {
 			var infoIcon = this.getInfoIcon();
-			svgEl.find('#logo').empty().append(infoIcon);
+			this.$infoIcon = infoIcon;
+			var logo = svgEl.find('#logo').empty();
+			if (this.$regionControls && this.$countrySelect && this.$countrySelect.length) {
+				infoIcon.addClass('owid-info-icon');
+				this.$regionControls.append(infoIcon);
+			} else {
+				logo.append(infoIcon);
+			}
 			infoIcon.css('cursor', 'pointer');
 			infoIcon.on('mouseleave', function (e) {
 				$('#details-popup.owid-details-hover').remove();
