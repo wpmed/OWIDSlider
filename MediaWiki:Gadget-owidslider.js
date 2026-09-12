@@ -222,12 +222,16 @@ var OWIDSlider = {
 				OWIDSliderLoading: 'Yükleniyor... $1%'
 			},
 			uk: {
-				OWIDSliderFrameBack: 'Назад',
+				OWIDSliderFrameBack: 'Повернутись до карти',
 				OWIDSliderFrameBackDesktop: 'Повернутись до статті',
 				OWIDSliderFrameImageCredit: 'Інформація про авторство',
 				OWIDSliderFrameCopyLink: 'Копіювати пряме посилання',
 				OWIDSliderSliderLabel: 'Вибрати зображення',
+				OWIDSliderSelectRegion: 'Вибрати регіон',
 				OWIDSliderPlayLabel: 'Показати слайдшоу',
+				OWIDSliderShowRegionGraph: "Графік",
+				OWIDSliderShowRegionMap: "Карта",
+				OWIDSliderShowRegionLine: "Лінія",
 				OWIDSliderLoading: 'Завантаження... $1%'
 			},
 			zh: {
