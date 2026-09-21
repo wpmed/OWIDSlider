@@ -191,6 +191,40 @@
   }
 }
 
+.owid-region-controls .owid-close-btn {
+  flex-shrink: 0;
+  margin-left: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #c4c4c4;
+  border-radius: 4px;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+}
+
+.owid-region-controls .owid-close-btn:hover,
+.owid-region-controls .owid-close-btn:focus {
+  background-color: #eaecf0;
+  color: #000;
+}
+
+@media (max-width: 600px) {
+  .owid-region-controls .owid-close-btn {
+    width: 50px;
+    height: 50px;
+  }
+
+  .owid-region-controls .owid-close-btn svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
 .owid-select-container {
   position: relative;
   display: inline-block;

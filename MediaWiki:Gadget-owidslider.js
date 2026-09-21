@@ -39,6 +39,7 @@ var OWIDSlider = {
 			af: {
 				OWIDSliderFrameBack: 'Keer terug na kaart',
 				OWIDSliderFrameBackDesktop: 'Keer terug na artikel',
+				OWIDSliderClose: 'Sluit',
 				OWIDSliderFrameImageCredit: 'Mediakrediete',
 				OWIDSliderFrameCopyLink: 'Kopieer direkte skakel',
 				OWIDSliderSliderLabel: 'Kies beeld',
@@ -52,6 +53,7 @@ var OWIDSlider = {
 			ar: {
 				OWIDSliderFrameBack: 'الرجوع إلى الخريطة',
 				OWIDSliderFrameBackDesktop: 'الرجوع إلى المقالة',
+				OWIDSliderClose: 'إغلاق',
 				OWIDSliderFrameImageCredit: 'نسب الوسائط',
 				OWIDSliderFrameCopyLink: 'نسخ الرابط المباشر',
 				OWIDSliderSliderLabel: 'اختر صورة',
@@ -88,6 +90,7 @@ var OWIDSlider = {
 			de: {
 				OWIDSliderFrameBack: 'Zurück',
 				OWIDSliderFrameBackDesktop: 'Zurück zum Artikel',
+				OWIDSliderClose: 'Schließen',
 				OWIDSliderFrameImageCredit: 'Mediencredits',
 				OWIDSliderFrameCopyLink: 'Direkten Link kopieren',
 				OWIDSliderSliderLabel: 'Bild auswählen',
@@ -98,6 +101,7 @@ var OWIDSlider = {
 			en: {
 				OWIDSliderFrameBack: 'Return to map',
 				OWIDSliderFrameBackDesktop: 'Return to article',
+				OWIDSliderClose: 'Close',
 				OWIDSliderFrameImageCredit: 'Media credits',
 				OWIDSliderFrameCopyLink: 'Copy Direct Link',
 				OWIDSliderSliderLabel: 'Select image',
@@ -111,6 +115,7 @@ var OWIDSlider = {
 			es: {
 				OWIDSliderFrameBack: 'Atrás',
 				OWIDSliderFrameBackDesktop: 'Volver al artículo',
+				OWIDSliderClose: 'Cerrar',
 				OWIDSliderFrameImageCredit: 'Créditos de medios',
 				OWIDSliderFrameCopyLink: 'Copiar enlace directo',
 				OWIDSliderSliderLabel: 'Seleccionar imagen',
@@ -121,6 +126,7 @@ var OWIDSlider = {
 			eu: {
 				OWIDSliderFrameBack: 'Atzera',
 				OWIDSliderFrameBackDesktop: 'Artikulura itzuli',
+				OWIDSliderClose: 'Itxi',
 				OWIDSliderFrameImageCredit: 'Irudien kredituak',
 				OWIDSliderFrameCopyLink: 'Lotura zuzena kopiatu',
 				OWIDSliderSliderLabel: 'Irudia aukeratu',
@@ -131,6 +137,7 @@ var OWIDSlider = {
 			fa: {
 				OWIDSliderFrameBack: 'بازگشت به نقشه',
 				OWIDSliderFrameBackDesktop: 'بازگشت به مقاله',
+				OWIDSliderClose: 'بستن',
 				OWIDSliderFrameImageCredit: 'منبع و حقوق رسانه‌ها',
 				OWIDSliderFrameCopyLink: 'رونوشت پیوند مستقیم',
 				OWIDSliderSliderLabel: 'انتخاب نگاره',
@@ -141,6 +148,7 @@ var OWIDSlider = {
 			fr: {
 				OWIDSliderFrameBack: 'Retour',
 				OWIDSliderFrameBackDesktop: "Retour à l'article",
+				OWIDSliderClose: 'Fermer',
 				OWIDSliderFrameImageCredit: 'Crédits médias',
 				OWIDSliderFrameCopyLink: 'Copier le lien direct',
 				OWIDSliderSliderLabel: "Sélectionner l'image",
@@ -151,6 +159,7 @@ var OWIDSlider = {
 			hi: {
 				OWIDSliderFrameBack: 'वापस',
 				OWIDSliderFrameBackDesktop: 'लेख पर वापस जाएं',
+				OWIDSliderClose: 'बंद करें',
 				OWIDSliderFrameImageCredit: 'मीडिया क्रेडिट',
 				OWIDSliderFrameCopyLink: 'प्रत्यक्ष लिंक कॉपी करें',
 				OWIDSliderSliderLabel: 'छवि चुनें',
@@ -161,6 +170,7 @@ var OWIDSlider = {
 			id: {
 				OWIDSliderFrameBack: 'Kembali',
 				OWIDSliderFrameBackDesktop: 'Kembali ke artikel',
+				OWIDSliderClose: 'Tutup',
 				OWIDSliderFrameImageCredit: 'Kredit media',
 				OWIDSliderFrameCopyLink: 'Salin pranala langsung',
 				OWIDSliderSliderLabel: 'Pilih gambar',
@@ -171,6 +181,7 @@ var OWIDSlider = {
 			it: {
 				OWIDSliderFrameBack: 'Indietro',
 				OWIDSliderFrameBackDesktop: "Torna all'articolo",
+				OWIDSliderClose: 'Chiudi',
 				OWIDSliderFrameImageCredit: 'Crediti media',
 				OWIDSliderFrameCopyLink: 'Copia link diretto',
 				OWIDSliderSliderLabel: 'Seleziona immagine',
@@ -181,6 +192,7 @@ var OWIDSlider = {
 			ja: {
 				OWIDSliderFrameBack: '戻る',
 				OWIDSliderFrameBackDesktop: '記事に戻る',
+				OWIDSliderClose: '閉じる',
 				OWIDSliderFrameImageCredit: 'メディアクレジット',
 				OWIDSliderFrameCopyLink: '直接リンクをコピー',
 				OWIDSliderSliderLabel: '画像を選択',
@@ -194,6 +206,7 @@ var OWIDSlider = {
 			ko: {
 				OWIDSliderFrameBack: '지도로 돌아가기',
 				OWIDSliderFrameBackDesktop: '문서로 돌아가기',
+				OWIDSliderClose: '닫기',
 				OWIDSliderFrameImageCredit: '미디어 정보',
 				OWIDSliderFrameCopyLink: '다이렉트 링크 복사',
 				OWIDSliderSliderLabel: '이미지 선택',
@@ -204,6 +217,7 @@ var OWIDSlider = {
 			sv: {
 				OWIDSliderFrameBack: 'Gå tillbaka till kartan',
 				OWIDSliderFrameBackDesktop: 'Gå tillbaka till artikeln',
+				OWIDSliderClose: 'Stäng',
 				OWIDSliderFrameImageCredit: 'Mediaattribuering',
 				OWIDSliderFrameCopyLink: 'Kopiera direktlänk',
 				OWIDSliderSliderLabel: 'Välj bild',
@@ -214,6 +228,7 @@ var OWIDSlider = {
 			tr: {
 				OWIDSliderFrameBack: 'Haritaya dön',
 				OWIDSliderFrameBackDesktop: 'Makaleye dön',
+				OWIDSliderClose: 'Kapat',
 				OWIDSliderFrameImageCredit: 'Medya kredileri',
 				OWIDSliderFrameCopyLink: 'Doğrudan Bağlantıyı Kopyala',
 				OWIDSliderSliderLabel: 'Resim seç',
@@ -224,6 +239,7 @@ var OWIDSlider = {
 			uk: {
 				OWIDSliderFrameBack: 'Назад',
 				OWIDSliderFrameBackDesktop: 'Повернутись до статті',
+				OWIDSliderClose: 'Закрити',
 				OWIDSliderFrameImageCredit: 'Інформація про авторство',
 				OWIDSliderFrameCopyLink: 'Копіювати пряме посилання',
 				OWIDSliderSliderLabel: 'Вибрати зображення',
@@ -1574,7 +1590,8 @@ OWIDSlider.Context.prototype = {
 				.text(mw.msg('OWIDSliderSelectRegion'));
 			selectContainer.append($select).append(selectArrow).append(selectLabel);
 			$select = selectContainer;
-			this.$regionControls = $('<div>').attr('class', 'owid-region-controls').append($select);
+			this.$closeBtn = this.getCloseButton();
+			this.$regionControls = $('<div>').attr('class', 'owid-region-controls').append($select).append(this.$closeBtn);
 			this.$header.append(this.$regionControls);
 		}
 
@@ -1899,6 +1916,23 @@ OWIDSlider.Context.prototype = {
 		}
 		return svgEl;
 	},
+	getCloseButton: function () {
+		var label = mw.message('OWIDSliderClose').exists() ? mw.msg('OWIDSliderClose') : OWIDSlider.I18n.messages.en.OWIDSliderClose;
+		var $button = $('<button>')
+			.attr({
+				type: 'button',
+				'class': 'owid-close-btn',
+				title: label,
+				'aria-label': label
+			})
+			.append($('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M3.5 3.5l13 13M16.5 3.5l-13 13" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>'));
+		$button.on('click', function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			OO.ui.getWindowManager().closeWindow('OWIDSlider');
+		});
+		return $button;
+	},
 	getInfoIcon: function () {
 		// Original at https://commons.wikimedia.org/wiki/File:Information_icon.svg
 		var $icon = $(
@@ -1942,7 +1976,11 @@ OWIDSlider.Context.prototype = {
 			var logo = svgEl.find('#logo').empty();
 			if (this.$regionControls && this.$countrySelect && this.$countrySelect.length) {
 				infoIcon.addClass('owid-info-icon');
-				this.$regionControls.append(infoIcon);
+				if (this.$closeBtn) {
+					infoIcon.insertBefore(this.$closeBtn);
+				} else {
+					this.$regionControls.append(infoIcon);
+				}
 			} else {
 				logo.append(infoIcon);
 			}
