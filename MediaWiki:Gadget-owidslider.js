@@ -72,6 +72,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Vybrat obrázek',
 				OWIDSliderSelectRegion: 'Vybrat oblast',
 				OWIDSliderPlayLabel: 'Zobrazit prezentaci',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Načítání... $1%'
 			},
 			dag: {
@@ -96,6 +98,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Bild auswählen',
 				OWIDSliderSelectRegion: 'Region auswählen',
 				OWIDSliderPlayLabel: 'Diashow anzeigen',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Laden... $1%'
 			},
 			en: {
@@ -121,6 +125,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Seleccionar imagen',
 				OWIDSliderSelectRegion: 'Seleccionar región',
 				OWIDSliderPlayLabel: 'Mostrar presentación de diapositivas',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Cargando... $1%'
 			},
 			eu: {
@@ -132,6 +138,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Irudia aukeratu',
 				OWIDSliderSelectRegion: 'Eskualdea aukeratu',
 				OWIDSliderPlayLabel: 'Irudien sorta erakutsi',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Kargatzen... $1%'
 			},
 			fa: {
@@ -143,6 +151,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'انتخاب نگاره',
 				OWIDSliderSelectRegion: 'انتخاب منطقه',
 				OWIDSliderPlayLabel: 'نمایش اسلایدشو',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'در حال بارگذاری... $1%'
 			},
 			fr: {
@@ -154,6 +164,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: "Sélectionner l'image",
 				OWIDSliderSelectRegion: 'Sélectionner la région',
 				OWIDSliderPlayLabel: 'Afficher le diaporama',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Chargement... $1%'
 			},
 			hi: {
@@ -165,6 +177,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'छवि चुनें',
 				OWIDSliderSelectRegion: 'क्षेत्र चुनें',
 				OWIDSliderPlayLabel: 'स्लाइडशो दिखाएं',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'लोड हो रहा है... $1%'
 			},
 			id: {
@@ -176,6 +190,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Pilih gambar',
 				OWIDSliderSelectRegion: 'Pilih wilayah',
 				OWIDSliderPlayLabel: 'Tampilkan tayangan salindia',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Memuat... $1%'
 			},
 			it: {
@@ -187,6 +203,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Seleziona immagine',
 				OWIDSliderSelectRegion: 'Seleziona regione',
 				OWIDSliderPlayLabel: 'Mostra presentazione',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Caricamento... $1%'
 			},
 			ja: {
@@ -212,6 +230,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: '이미지 선택',
 				OWIDSliderSelectRegion: '지역 선택',
 				OWIDSliderPlayLabel: '슬라이드쇼 보기',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: '불러오는 중... $1%'
 			},
 			sv: {
@@ -223,6 +243,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Välj bild',
 				OWIDSliderSelectRegion: 'Välj region',
 				OWIDSliderPlayLabel: 'Visa bildspel',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Laddar... $1%'
 			},
 			tr: {
@@ -234,6 +256,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Resim seç',
 				OWIDSliderSelectRegion: 'Bölge seçin',
 				OWIDSliderPlayLabel: 'Slayt gösterisini göster',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Yükleniyor... $1%'
 			},
 			uk: {
@@ -243,7 +267,11 @@ var OWIDSlider = {
 				OWIDSliderFrameImageCredit: 'Інформація про авторство',
 				OWIDSliderFrameCopyLink: 'Копіювати пряме посилання',
 				OWIDSliderSliderLabel: 'Вибрати зображення',
+				OWIDSliderSelectRegion: 'Вибрати регіон',
 				OWIDSliderPlayLabel: 'Показати слайдшоу',
+				OWIDSliderShowRegionGraph: "Графік",
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Завантаження... $1%'
 			},
 			zh: {
@@ -254,6 +282,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: '选择图片',
 				OWIDSliderSelectRegion: '选择区域',
 				OWIDSliderPlayLabel: '显示幻灯片',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: '加载中... $1%'
 			},
 			'zh-hant': {
@@ -264,6 +294,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: '選擇圖片',
 				OWIDSliderSelectRegion: '選擇區域',
 				OWIDSliderPlayLabel: '顯示投影片',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: '載入中... $1%'
 			},
 			'zh-hans': {
@@ -274,6 +306,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: '选择图片',
 				OWIDSliderSelectRegion: '选择区域',
 				OWIDSliderPlayLabel: '显示幻灯片',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: '加载中... $1%'
 			},
 			vt: {
@@ -284,6 +318,8 @@ var OWIDSlider = {
 				OWIDSliderSliderLabel: 'Chọn hình ảnh',
 				OWIDSliderSelectRegion: 'Chọn khu vực',
 				OWIDSliderPlayLabel: 'Hiển thị trình chiếu',
+				OWIDSliderShowRegionMap: "Map",
+				OWIDSliderShowRegionLine: "Line",
 				OWIDSliderLoading: 'Đang tải... $1%'
 			}
 		},
