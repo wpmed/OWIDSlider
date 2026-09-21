@@ -341,6 +341,32 @@ var OWIDSlider = {
 		return OWIDSlider.I18n.setMessages();
 	},
 
+	// Turn a gallery key such as "NorthAmerica" into the label shown in the
+	// region selector ("North America").
+	viewDisplayName: function (key) {
+		return String(key).replace(/([A-Z])/g, ' $1').trim();
+	},
+
+	// Order the region selector: "World" first (or firstKey, which the list page
+	// marks as its first gallery and Module:Owidslider guarantees is World when a
+	// World gallery exists, even when gallery names are translated), then the
+	// remaining views alphabetically by their displayed name.
+	sortViewKeys: function (keys, firstKey) {
+		var first = [];
+		var rest = [];
+		keys.forEach(function (key) {
+			if (key === 'World' || (firstKey && key === firstKey)) {
+				first.push(key);
+			} else {
+				rest.push(key);
+			}
+		});
+		rest.sort(function (a, b) {
+			return OWIDSlider.viewDisplayName(a).localeCompare(OWIDSlider.viewDisplayName(b));
+		});
+		return first.concat(rest);
+	},
+
 	parseQueryParams: function () {
 		return OWIDSlider.Core.parseQueryParams();
 	},
@@ -1363,7 +1389,7 @@ var OWIDSlider = {
 		if (!this.currentView && subIdsSorted && subIdsSorted.length > 0 && imgs[subIdsSorted[0]]) {
 			this.currentView = subIdsSorted[0];
 		} else if (!this.currentView) {
-			this.currentView = Object.keys(imgs)[0];
+			this.currentView = OWIDSlider.sortViewKeys(Object.keys(imgs))[0];
 		}
 		this.language = config.language ? config.language.trim() : mw.config.get('wgUserLanguage') || mw.config.get('wgPageContentLanguage') || '';
 		this.total = Object.keys(imgs[this.currentView]).length;
@@ -1520,12 +1546,16 @@ OWIDSlider.Context.prototype = {
 			$select = $('<select>')
 				.attr('id', 'OWIDSliderViewSelector')
 				.attr('class', 'owid-select');
-			for (let i in this.imgs) {
-				var optionName = i.replace(/([A-Z])/g, ' $1').trim();
+			var viewKeys = OWIDSlider.sortViewKeys(
+				Object.keys(this.imgs),
+				this.subIdsSorted && this.subIdsSorted.length > 0 ? this.subIdsSorted[0] : undefined
+			);
+			for (var v = 0; v < viewKeys.length; v++) {
+				var viewKey = viewKeys[v];
 				$select.append(
 					$('<option>')
-						.attr({ value: i, selected: this.currentView === i })
-						.text(optionName)
+						.attr({ value: viewKey, selected: this.currentView === viewKey })
+						.text(OWIDSlider.viewDisplayName(viewKey))
 				);
 			}
 			$select.change(function (e) {
@@ -1589,6 +1619,10 @@ OWIDSlider.Context.prototype = {
 		}
 
 		this.$regionChartBtnContainer = null;
+		// The Map option is always offered. The Line option is only added when a
+		// line chart was imported for the current view (a gallery-RegionsCharts
+		// entry on the list page); otherwise the Map radio stands alone.
+		var hasLineChart = !!(this.regionsChartsUrls && this.regionsChartsUrls[this.currentView]);
 		var regionBtnLabelMap = mw.msg('OWIDSliderShowRegionMap');
 		var $regionRadioBtnMap = $('<input>')
 			.attr({
@@ -1600,27 +1634,31 @@ OWIDSlider.Context.prototype = {
 		var $mapOption = $("<label></label>").attr('class', 'owid-viewmode-option');
 		$mapOption.append($regionRadioBtnMap).append($("<span></span>").text(regionBtnLabelMap));
 
-		var regionBtnLabelLine = mw.msg('OWIDSliderShowRegionLine');
-		var $regionRadioBtnLine = $('<input>')
-			.attr({
-				type: 'radio',
-				name: 'OWIDSliderViewMode',
-				id: 'owid-viewmode-line',
-				checked: this.viewMode == "line",
-				disabled: !this.regionsChartsUrls[this.currentView]
-			});
-		var $lineOption = $("<label></label>").attr('class', 'owid-viewmode-option');
-		$lineOption.append($regionRadioBtnLine).append($("<span></span>").text(regionBtnLabelLine));
 		this.$regionChartBtnContainer = $('<div>').attr('class', 'owid-region-chart-container');
-		this.$regionChartBtnContainer.append($mapOption).append($lineOption);
+		this.$regionChartBtnContainer.append($mapOption);
+
+		if (hasLineChart) {
+			var regionBtnLabelLine = mw.msg('OWIDSliderShowRegionLine');
+			var $regionRadioBtnLine = $('<input>')
+				.attr({
+					type: 'radio',
+					name: 'OWIDSliderViewMode',
+					id: 'owid-viewmode-line',
+					checked: this.viewMode == "line",
+				});
+			var $lineOption = $("<label></label>").attr('class', 'owid-viewmode-option');
+			$lineOption.append($regionRadioBtnLine).append($("<span></span>").text(regionBtnLabelLine));
+			this.$regionChartBtnContainer.append($lineOption);
+
+			$lineOption.on('click', function () {
+				if (this.viewMode != "line" && this.regionsChartsUrls[this.currentView]) {
+					this.viewMode = "line";
+					this.loadRegionChart(this.currentView);
+				}
+			}.bind(this));
+		}
 		this.$header.append(this.$regionChartBtnContainer);
 
-		$lineOption.on('click', function () {
-			if (this.viewMode != "line" && this.regionsChartsUrls[this.currentView]) {
-				this.viewMode = "line";
-				this.loadRegionChart(this.currentView);
-			}
-		}.bind(this));
 		$mapOption.on("click", function () {
 			if (this.viewMode != "map") {
 				this.viewMode = "map";
